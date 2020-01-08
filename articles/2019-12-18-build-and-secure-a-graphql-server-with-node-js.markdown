@@ -2,8 +2,8 @@
 layout: post
 title: Build and Secure a GraphQL Server with Node.js
 metatitle: Build and Secure a GraphQL Server with Node.js
-description: "Learn how to handle authentication and authorization of a GraphQL server using Node.js and JWTs."
-metadescription: "How to handle authentication and authorization with GraphQL is often neglected. Learn how to build and secure a GraphQL server with Node.js using JWTs."
+description: 'Learn how to handle authentication and authorization of a GraphQL server using Node.js and JWTs.'
+metadescription: 'How to handle authentication and authorization with GraphQL is often neglected. Learn how to build and secure a GraphQL server with Node.js using JWTs.'
 date: 2019-12-18 08:30
 category: Developers, Tutorial, GraphQL
 post_length: 4
@@ -15,20 +15,20 @@ author:
 design:
   illustration: https://cdn.auth0.com/blog/illustrations/graphql.png
 tags:
-- nodejs
-- graphql
-- mongodb
-- authentication
-- authorization
-- server-side
-- api
+  - nodejs
+  - graphql
+  - mongodb
+  - authentication
+  - authorization
+  - server-side
+  - api
 related:
-- 2019-08-13-vuejs-spring-boot-kotlin-and-graphql-building-modern-apps-part-1
-- 2019-08-14-authorization-series-pt-3-dynamic-authorization-with-graphql-and-rules
-- 2019-03-13-developing-and-securing-graphql-apis-with-laravel
+  - 2019-08-13-vuejs-spring-boot-kotlin-and-graphql-building-modern-apps-part-1
+  - 2019-08-14-authorization-series-pt-3-dynamic-authorization-with-graphql-and-rules
+  - 2019-03-13-developing-and-securing-graphql-apis-with-laravel
 ---
 
-**TL;DR:** Since its public release in 2015, GraphQL has grown from a new technology into a mature API specification, which is used by both small and big tech companies worldwide. Using a type system, it lets you query and mutate data using a simple and understandable format. 
+**TL;DR:** Since its public release in 2015, GraphQL has grown from a new technology into a mature API specification, which is used by both small and big tech companies worldwide. Using a type system, it lets you query and mutate data using a simple and understandable format.
 
 Although many articles online demonstrate how to create a GraphQL server with Node.js, how to handle authentication and authorization is often neglected. This post will show how to build a GraphQL server and consequently secure it using Auth0.
 
@@ -128,9 +128,9 @@ And subsequently, copy and paste the following code into this file:
 ```js
 // src/index.js
 
-const express = require("express");
-const graphqlHTTP = require("express-graphql");
-const { buildSchema } = require("graphql");
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
+const { buildSchema } = require('graphql');
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -141,16 +141,16 @@ const schema = buildSchema(`
 
 // Provide resolver functions for your schema fields
 const resolvers = {
-  hello: () => "Hello world!"
+  hello: () => 'Hello world!',
 };
 
 const app = express();
 app.use(
-  "/graphql",
+  '/graphql',
   graphqlHTTP({
     schema,
-    rootValue: resolvers
-  })
+    rootValue: resolvers,
+  }),
 );
 app.listen(4000);
 
@@ -232,7 +232,7 @@ Afterward, copy the following code into the `schema.js` file:
 ```js
 // src/schema.js
 
-const { buildSchema } = require("graphql");
+const { buildSchema } = require('graphql');
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -264,7 +264,7 @@ As the GraphQL server should return information about events and the people atte
 ```js
 // src/schema.js
 
-const { buildSchema } = require("graphql");
+const { buildSchema } = require('graphql');
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -309,15 +309,14 @@ After adding these packages you need to create a new file in your project that w
 
 ```bash
 touch src/database.js
-``` 
- 
+```
+
 In this file, the code block below must be placed, which has all the code you need to create the MongoDB instance:
 
 ```js
 // src/database.js
-
-const { MongoMemoryServer } = require("mongodb-memory-server");
-const { MongoClient } = require("mongodb");
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const { MongoClient } = require('mongodb');
 
 let database = null;
 
@@ -325,47 +324,48 @@ async function startDatabase() {
   const mongo = new MongoMemoryServer();
   const mongoDBURL = await mongo.getConnectionString();
   const connection = await MongoClient.connect(mongoDBURL, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
   });
-  database = connection.db();
 
-  await database.collection("events").insertMany([
-    {
-      id: 1,
-      title: "GraphQL Introduction Night",
-      description: "Introductionary night to GraphQL",
-      date: "2019-11-06T17:34:25+00:00",
-      attendants: [
-        {
-          id: 1,
-          name: "Peter",
-          age: 34
-        },
-        {
-          id: 2,
-          name: "Kassandra",
-          age: 23
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: "GraphQL Introduction Night #2",
-      description: "Introductionary night to GraphQL",
-      date: "2019-11-06T17:34:25+00:00",
-      attendants: [
-        {
-          id: 3,
-          name: "Kim",
-          age: null
-        }
-      ]
-    }
-  ]);
+  if (!database) {
+    database = connection.db();
+    await database.collection('events').insertMany([
+      {
+        id: 1,
+        title: 'GraphQL Introduction Night',
+        description: 'Introductionary night to GraphQL',
+        date: '2019-11-06T17:34:25+00:00',
+        attendants: [
+          {
+            id: 1,
+            name: 'Peter',
+            age: 34,
+          },
+          {
+            id: 2,
+            name: 'Kassandra',
+            age: 23,
+          },
+        ],
+      },
+      {
+        id: 2,
+        title: 'GraphQL Introduction Night #2',
+        description: 'Introductionary night to GraphQL',
+        date: '2019-11-06T17:34:25+00:00',
+        attendants: [
+          {
+            id: 3,
+            name: 'Kim',
+            age: null,
+          },
+        ],
+      },
+    ]);
+  }
 
   return database;
 }
-
 module.exports = startDatabase;
 ```
 
@@ -386,7 +386,7 @@ const startDatabase = require('./database');
 // Create a context for holding contextual data
 const context = async () => {
   const db = await startDatabase();
-  
+
   return { db };
 };
 
@@ -551,7 +551,7 @@ In this section, you'll also make it possible to send mutations to the server th
 ```js
 // src/schema.js
 
-const { buildSchema } = require("graphql");
+const { buildSchema } = require('graphql');
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
@@ -602,9 +602,9 @@ const resolvers = {
     const { db } = await context();
     return db.collection('events').findOne({ id });
   },
- editEvent: async ({ id, title, description }, context) => {   
+ editEvent: async ({ id, title, description }, context) => {
    const { db } = await context();
-   
+
    return db
      .collection('events')
      .findOneAndUpdate(
@@ -672,7 +672,7 @@ The form to create a new API requires the following information:
 
 ![Auth0 form used to create a new API](https://cdn.auth0.com/blog/developing-a-secure-api-with-nestjs/auth0-dashboard-new-api-form.png)
 
-After adding this information to the form, you can click the _Create_ button. You are then taken to the "Quick Start" section of the Auth0 API you just created. In here, click on the "Node.js" tab to get an idea of the code you'll need to use in your GraphQL server to validate JWTs issued by Auth0. 
+After adding this information to the form, you can click the _Create_ button. You are then taken to the "Quick Start" section of the Auth0 API you just created. In here, click on the "Node.js" tab to get an idea of the code you'll need to use in your GraphQL server to validate JWTs issued by Auth0.
 
 There are two critical values on the Node.js code snippet that you'll need in a few moments: the values of the `audience` and `issuer` properties of the object argument passed to the `jwt` function.
 
@@ -695,12 +695,12 @@ This file will hold the code to validate the JWTs that are sent to your GraphQL 
 ```js
 // src/validate.js
 
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const jwksClient = require("jwks-rsa");
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 
 const client = jwksClient({
-  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+  jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
 });
 
 function getKey(header, callback) {
@@ -712,7 +712,7 @@ function getKey(header, callback) {
 
 async function isTokenValid(token) {
   if (token) {
-    const bearerToken = token.split(" ");
+    const bearerToken = token.split(' ');
 
     const result = new Promise((resolve, reject) => {
       jwt.verify(
@@ -721,7 +721,7 @@ async function isTokenValid(token) {
         {
           audience: process.env.API_IDENTIFIER,
           issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-          algorithms: ["RS256"]
+          algorithms: ['RS256'],
         },
         (error, decoded) => {
           if (error) {
@@ -730,14 +730,14 @@ async function isTokenValid(token) {
           if (decoded) {
             resolve({ decoded });
           }
-        }
+        },
       );
     });
 
     return result;
   }
 
-  return { error: "No token provided" };
+  return { error: 'No token provided' };
 }
 
 module.exports = isTokenValid;
@@ -748,11 +748,11 @@ The function `isTokenValid` in the file above checks the validity of a JWT by us
 If the token send to `isTokenValid` can be validated, the promise will resolve and the token will be marked as valid. Otherwise, the promise will return an error, which also happens when no token is provided. Note that you don't reject the promise as the error handling is done in the resolvers later on.
 
 The values for these constants need to be added to a hidden file `.env`, making it the place to store sensitive values locally. Ensure to be in the root folder of the project and create the `.env` file by running this command:
- 
+
 ```bash
 touch .env
 ```
- 
+
 Now, place the code block below in that file:
 
 ```
@@ -944,14 +944,17 @@ Suppose you want to limit the data that's returned by the query for a list of ev
 const resolvers = {
   events: async (_, context) => {
     const { db, token } = await context();
-    
     const { error } = await isTokenValid(token);
-    
-    const events = db.collection('events').find();
-
+    const events = db.collection("events").find();
     return !error
       ? events.toArray()
       : events.project({ attendants: null }).toArray();
+  },
+  event: async ({ id }, context) => {
+    const { db, token } = await context();
+    const { error } = await isTokenValid(token);
+    const event = await db.collection("events").findOne({ id });
+    return !error ? event : { ...event, attendants: null };
   },
 
   ...
@@ -972,7 +975,7 @@ query {
 }
 ```
 
-You'll get an error as a response.
+You won't get an error as a response, but the field `attendants` will be `null`. The same `null` value for `attendants` will be returned when you would query a single event.
 
 ## Conclusion
 
