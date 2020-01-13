@@ -975,7 +975,7 @@ query {
 }
 ```
 
-You won't get an error as a response, but the field `attendants` will be `null`. The same `null` value for `attendants` will be returned when you would query a single event.
+You won't get an error as a response. Instead, you'll get a response object that has an `attendants` field set to `null`. The `attendants` field will also be `null` when you query the database for a single event.
 
 ## Conclusion
 
