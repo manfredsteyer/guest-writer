@@ -2,17 +2,16 @@
 layout: post
 title: Developing Secure Web Applications with React and GraphQL
 metatitle: Developing Secure Web Applications with React and GraphQL
-description: 'Develop a secure web application that handles authentication and authorization using React and GraphQL.'
-metadescription: 'Develop a secure web application that handles authentication and authorization using React and GraphQL.'
-date: 2019-11-23 20:12
-category: Developers, Tutorial, React, GraphQL
+description: Develop a secure web application that handles authentication and authorization using React and GraphQL
+metadescription: Develop a secure web application that handles authentication and authorization using React and GraphQL
+date: 2020-01-30 10:30
+category: Developers, Tutorial, GraphQL
 post_length:
-auth0_aside: true
-community_topic_id:
+community_topic_id: 
 author:
-  name: 'Roy Derks'
-  url: 'gethackteam'
-  avatar: 'https://twitter.com/gethackteam/profile_image?size=original'
+  name: Roy Derks
+  url: https://twitter.com/gethackteam
+  avatar: https://cdn.auth0.com/blog/guest-authors/roy-derks.png
 design:
   illustration: https://cdn.auth0.com/blog/illustrations/ambassador-in-the-moon.png
 tags:
@@ -20,7 +19,7 @@ tags:
   - graphql
   - apollo
 related:
-  - https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/
+- 
 ---
 
 **TL;DR:** The introduction of GraphQL in 2015 changed how applications can request information from an API, and how that information flows through these applications. No longer do you have to filter large chunks of data to display the correct information to your users, but instead, by using GraphQL, you can specifically request whatever information you want to show them. React is a great library to create web applications with ease and handle side effects like authentication using the lifecycles it provides.
