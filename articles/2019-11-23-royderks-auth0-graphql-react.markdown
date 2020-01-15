@@ -129,7 +129,36 @@ The project is now ready to be connected to the GraphQL server, which will use [
 
 ## Using GraphQL with Apollo
 
-The data for the application you create in this post is returned by the GraphQL server that was described in the Prerequisites section. After you've followed the instructions in the _Getting started_ section of that [project's README](https://github.com/auth0-blog/auth0-graphql-server), including adding your Auth0 information, the GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). You can also see an interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries and/or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
+The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainer of this post. 
+
+### Setting Up a GraphQL Server
+To set up the GraphQL server that is needed to get the data for the React application that you've built so far, you need to follow all the steps in the tutorial [Build and Secure a GraphQL Server with Node.js](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) or clone the project from [Github](https://github.com/auth0-blog/auth0-graphql-server). 
+
+If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_. Otherwise, after cloning the repository you need to move into the newly created directory and follow the steps in the _Getting started_ section of the readme. This means you need to create a new file called `.env`:
+
+```bash
+touch .env
+```
+And add the following values to that file.
+
+```
+AUTH0_DOMAIN=YOUR_AUTH0_DOMAIN
+API_IDENTIFIER=GRAPHQL_SERVER_API_IDENTIFIER
+```
+
+The values of `YOUR_AUTH0_DOMAIN` and `GRAPHQL_SERVER_API_IDENTIFIER` must be replaced by the values from your Auth0 account:
+
+- The value of `AUTH0_DOMAIN` is the value of the issuer object property from the code snippet, without the protocol, https://, the quotation marks, and the trailing slash. It follows this format: `YOUR-AUTH0-TENANT.auth0.com`.
+
+- The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, that you must create on the [API section](https://manage.auth0.com/#/apis) of the Auth0 dasboard. Do not include quotation marks.
+
+After creating this file and adding the correct values to it, you can install and start the GraphQL server by running:
+
+```bash
+npm install && npm start
+```
+
+The GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). You can also see an interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries and/or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
 
 ```
 query {
