@@ -369,7 +369,9 @@ async function startDatabase() {
 module.exports = startDatabase;
 ```
 
-Using the function `startDatabase`, you can connect with the mock MongoDB instance, and after creating the server, it will be filled with the mock data for your collections. What the function will return is a database filled with the mock data, as you can see in the block of code above. Every time a resolver gets called, the function `startDatabase` gets called as well. Therefore you must check if the `database` variable is already existing, meaning a mock MongoDB instance has already been created. If you don't check for the existence of the `database` variable, every document with a query of mutation you pass to the server will create a new mock MongoDB instance, meaning any changes to the data won't be visible.
+As you can see in the block of code above, you use the function `startDatabase` to connect with the mock MongoDB instance, populate the instance with mock data for your collections, and return to the function caller a reference to the instance.
+
+This `startDatabase` function is called right after creating the server but also every time that a resolver gets called. Therefore you must check if the database variable already exists, which means that a mock MongoDB instance has already been created. Otherwise, every document with a query or mutation you pass to the server will create a new mock MongoDB instance, and any changes to the data won't be visible.
 
 Connecting your GraphQL server with a data source is often done by using the context function that is available from the resolvers. The context holds important contextual data like database access or user information and is created by the GraphQL server during setup.
 
