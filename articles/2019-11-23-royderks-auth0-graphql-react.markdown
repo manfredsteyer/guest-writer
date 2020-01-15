@@ -121,9 +121,9 @@ Next, you can delete the following files from the project as you will no longer 
 src
 |-- App.css
 |-- App.test.js
-|-- src/index.css
+|-- index.css
 |-- logo.svg
-|-- src/setupTests.js
+|-- setupTests.js
 ```
 
 The project is now ready to be connected to the GraphQL server, which will use [Apollo](https://www.apollographql.com/docs/react/) in the next section.
