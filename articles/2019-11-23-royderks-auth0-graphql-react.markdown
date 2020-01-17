@@ -32,7 +32,7 @@ Before you continue reading this tutorial, you'll need to make sure that you hav
 
 This post will be using a GraphQL server that is set up to handle authentication and authorization with Auth0. The code for this server can be found [here](https://github.com/auth0-blog/auth0-graphql-server). To run the server, you need to follow the steps in the _Getting started_ section README of that project, including [adding your Auth0 information](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0). If you don't have an Auth0 account yet, you can <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">register one for free here</a>. Also, I'm assuming you already have prior knowledge about JavaScript and React and know how you can create components and update state.
 
-> **Note** You will need write down the values for `AUTH0_DOMAIN` and `API_IDENTIFIER` from the `.env` file of the GraphQL server, as you'll also need these values for this post.
+> **Note** You will need to write down the values for `AUTH0_DOMAIN` and `API_IDENTIFIER` from the `.env` file of the GraphQL server, as you'll also need these values for this post.
 
 ## What is GraphQL?
 
@@ -72,7 +72,7 @@ This means that all the components that you'd like to render in the browser must
 npm install react-router-dom
 ```
 
-With `react-router-dom`, you can import a `Router` component that will be used by your application to dynamically change between pages without having to refresh the page. This `Router` component must be added at the top level in `src/index.js` and it must wrap the `App` component:
+With `react-router-dom`, you can import a `Router` component that will be used by your application to change between pages without having to refresh the page dynamically. This `Router` component must be added at the top level in `src/index.js` and it must wrap the `App` component:
 
 ```js
 // src/index.js
@@ -129,12 +129,12 @@ The project is now ready to be connected to the GraphQL server, which will use [
 
 ## Using GraphQL with Apollo
 
-The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainer of this post. 
+The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainder of this post. 
 
 ### Setting Up a GraphQL Server
 To set up the GraphQL server that is needed to get the data for the React application that you've built so far, you need to follow all the steps in the tutorial [Build and Secure a GraphQL Server with Node.js](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) or clone the project from [Github](https://github.com/auth0-blog/auth0-graphql-server). 
 
-If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_. Otherwise, after cloning the repository you need to move into the newly created directory and follow the steps in the _Getting started_ section of the readme. This means you need to create a new file called `.env`:
+If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_. Otherwise, after cloning the repository, you need to move into the newly created directory and follow the steps in the _Getting started_ section of the readme. This means you need to create a new file called `.env`:
 
 ```bash
 touch .env
@@ -150,7 +150,7 @@ The values of `YOUR_AUTH0_DOMAIN` and `GRAPHQL_SERVER_API_IDENTIFIER` must be re
 
 - The value of `AUTH0_DOMAIN` is the value of the issuer object property from the code snippet, without the protocol, https://, the quotation marks, and the trailing slash. It follows this format: `YOUR-AUTH0-TENANT.auth0.com`.
 
-- The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, that you must create on the [API section](https://manage.auth0.com/#/apis) of the Auth0 dasboard. Do not include quotation marks.
+- The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, that you must create on the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard. Do not include quotation marks.
 
 After creating this file and adding the correct values to it, you can install and start the GraphQL server by running:
 
@@ -158,7 +158,7 @@ After creating this file and adding the correct values to it, you can install an
 npm install && npm start
 ```
 
-The GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). You can also see an interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries and/or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
+The GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). You can also see an interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
 
 ```
 query {
@@ -172,7 +172,7 @@ query {
 }
 ```
 
-The response of this query will be the full list events including its `title`, `date`, and the `name` of every attendant of the event. This response will be in JSON and looks like the following:
+The response of this query will be the full list events, including its `title`, `date`, and the `name` of every attendant of the event. This response will be in JSON and looks like the following:
 
 ```json
 {
@@ -506,7 +506,7 @@ export const Auth0Provider = ({
 
 This file sets up the connection with Auth0 and returns a Provider called `Auth0Provider` and a Hook. This Provider is similar to `ApolloProvider` and needs your Auth0 credentials, making it possible to use the `useAuth0` Hook to connect with Auth0 from any components that are nested inside.
 
-Before adding the `Auth0Provider` to your project you need to store the `Domain` and `Client ID` somewhere safe, like a local environment file. When you create an application using Create React App, you can create a `.env` file in the root folder of your project and use the constants in this file from the `process.env` variable. Also, you'll be needing the Auth0 details from the GraphQL server as these are needed to create a JWT that can be validated by the GraphQL server.
+Before adding the `Auth0Provider` to your project, you need to store the `Domain` and `Client ID` somewhere safe, like a local environment file. When you create an application using Create React App, you can create a `.env` file in the root folder of your project and use the constants in this file from the `process.env` variable. Also, you'll be needing the Auth0 details from the GraphQL server as these are needed to create a JWT that can be validated by the GraphQL server.
 
 > **Note:** These constants need to be prefixed with `REACT_APP_` so they can be used inside an application created with Create React App.
 
@@ -530,7 +530,7 @@ The values of `YOUR_AUTH0_DOMAIN` and `YOUR_CLIENT_ID` must be replaced by the v
 
 - The value of `CLIENT_ID` is a unique public identifier for your application. Although it's a public identifier, it’s recommended to not make it easily guessable by third parties.
 
-As mentioned before the value of `API_IDENTIFIER` must be the same value as you used when creating the GraphQL server, this value can be found in the [API section](https://manage.auth0.com/#/apis) of the Auth0 dasboard:
+As mentioned before the value of `API_IDENTIFIER` must be the same value as you used when creating the GraphQL server, this value can be found in the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard:
 
 - The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, and it's the same value that you provided as an identifier to your Auth0 API earlier on. Do not include quotation marks.
 
@@ -581,7 +581,7 @@ ReactDOM.render(
 
 ```
 
-Any component that is nested within `Auth0Provider` is now able to send requests to the Auth0 service to authenticate the user by using the `useAuth0` Hook. This Hook returns multiple functions to help you with this, starting with the `loginWithRedirect` method that initiates the authentication with Auth0 and redirects the user to the login page. Also, the function `logout` is used by unauthenticated users and the const `isAuthenticated` shows the authentication status of a user. This functionality should be added in the file `src/App.js`:
+Any component that is nested within `Auth0Provider` is now able to send requests to the Auth0 service to authenticate the user by using the `useAuth0` Hook. This Hook returns multiple functions to help you with this, starting with the `loginWithRedirect` method that initiates the authentication with Auth0 and redirects the user to the login page. Also, the function `logout` is used by unauthenticated users, and the const `isAuthenticated` shows the authentication status of a user. This functionality should be added in the file `src/App.js`:
 
 ```js
 // src/App.js
@@ -699,7 +699,7 @@ function Events() {
 export default Events;
 ```
 
-This file uses the `GET_EVENT` query to retrieve a single event based on the `id` for the route, which you can test by going to [`http://localhost:3000/event/2`](http://localhost:3000/event/2). The `useParams` Hook from `react-router-dom` gets the value for `id` from the route and the `useQuery` Hook retrieves the event. You can see there are no attendants displayed yet, as the information on the field `attendants` is only visible when you pass a valid JWT with the query.
+This file uses the `GET_EVENT` query to retrieve a single event based on the `id` for the route, which you can test by going to [`http://localhost:3000/event/2`](http://localhost:3000/event/2). The `useParams` Hook from `react-router-dom` gets the value for `id` from the route, and the `useQuery` Hook retrieves the event. You can see there are no attendants displayed yet, as the information on the field `attendants` is only visible when you pass a valid JWT with the query.
 
 Passing along a JWT requires you to set more parameters to the `useQuery` Hook, but first, let's make the single event route reachable from the `Events` component. You can use the `Link` component from `react-router-dom` and add this to the file `src/Events.js`:
 
@@ -779,7 +779,7 @@ After adding the asynchronous call to the `getTokenSilently` function, the token
 
 > **Note** If you don't see a list of attendants of an event, make sure that the values for `AUTH0_DOMAIN` and `API_IDENTIFIER` are the same for both the GraphQL server and the application that you're building in this post.
 
-Next to showing events you also want the user's to be able to modify events, for which you need to send a document with a mutation instead of a query to the GraphQL server together with a valid JWT. Sending documents with mutations to the GraphQL server is very similar to how you implemented this for queries in the first section of this post. Instead of the `useQuery` Hook, you'll use the Hook called `useMutation`, which helps you with sending the document containing a mutation that allows you to edit events. In the previous post that explained how to create the GraphQL server, you added a mutation to edit both the `title` and `description` of an event. This mutation should also be used to edit the event from the React application.
+Next to showing events, you also want the user's to be able to modify events, for which you need to send a document with a mutation instead of a query to the GraphQL server together with a valid JWT. Sending documents with mutations to the GraphQL server is very similar to how you implemented this for queries in the first section of this post. Instead of the `useQuery` Hook, you'll use the Hook called `useMutation`, which helps you with sending the document containing a mutation that allows you to edit events. In the previous post that explained how to create the GraphQL server, you added a mutation to edit both the `title` and `description` of an event. This mutation should also be used to edit the event from the React application.
 
 But before creating the logic to mutate the data of an event, a `Form` component must be created. Using this component that you should create in the file `src/Form.js`, the event can be edited by adding the following code block to this file:
 
@@ -842,7 +842,7 @@ const Form = ({ id, onSubmit, refetch, ...props }) => {
 export default Form;
 ```
 
-This form has controlled input components, that use the local state to store changes when you type in the `input` elements. When you submit the form the `handleOnSubmit` function will be called, which calls both the `onSubmit` and `refetch` functions that were passed as props from the `Event` component. The `onSubmit` function will send the document with the mutation to the GraphQL server, while the `refect` function sends the document with the query to retrieve the event to the server. In the `Event` component you must import the `Form` component and add the logic to send the document with the mutation, by making these changes to `src/Event.js`:
+This form has controlled input components that use the local state to store changes when you type in the `input` elements. When you submit the form, the `handleOnSubmit` function will be called, which calls both the `onSubmit` and `refetch` functions that were passed as props from the `Event` component. The `onSubmit` function will send the document with the mutation to the GraphQL server, while the `refect` function sends the document with the query to retrieve the event to the server. In the `Event` component, you must import the `Form` component and add the logic to send the document with the mutation, by making these changes to `src/Event.js`:
 
 ```js
 // src/Event.js
@@ -905,14 +905,14 @@ After making these changes, you can start editing the event when you're logged i
 
 ### Handle Authorization
 
-Next to authentication, another important part of your application is authorization as you want to distinguish between "regular" users and users that can modify your events. For this, you can use permissions and user roles, which are part of the Auth0 authentication service and can be added to the GraphQL server that you're using together with the React application that you're building in this post.
+Next to authentication, another important part of your application is authorization as you want to distinguish between "regular" users and users that can modify your events. For this, you can use permissions and user roles, which are part of the Auth0 authentication service, and can be added to the GraphQL server that you're using together with the React application that you're building in this post.
 
-To handle authorization you first need to perform several actions in the Auth0 Dashboard:
+To handle authorization, you first need to perform several actions in the Auth0 Dashboard:
 
 - Add [permissions](https://auth0.com/docs/dashboard/guides/apis/add-permissions-apis) to the API that you've created in the GraphQL Server tutorial, which you can do by going to the [API](https://manage.auth0.com/#/apis/) page in the Auth0 dashboard. On this page, you need to create a new `permission` called `edit:events` on the _Permissions_ tab.
-- On this same page, you need to make sure that both checkboxes for _RBAC Settings_ on the _Settings_ tab are checked, the first one enables Role-Based Access Control (RBAC) for the GraphQL server and the second checkbox adds the permissions for the user to the JWT.
-- You need to add this permission to an [user role](https://auth0.com/docs/dashboard/guides/roles/add-permissions-roles) and add a user to this role. Adding a new user role can also be done by visiting the [Roles](https://manage.auth0.com/#/roles/) page. Here you must create a new role called `admin` using the _Create role_ button, after creating the role you must add the `edit:events` permission and a user to it.
-- Adding a `permission` and a user to this role can be done by clicking on the newly created role on the [Roles](https://manage.auth0.com/#/roles/) page. On the page that opens you can add the `edit:events` permission to this role from the _Permissions_ tab and the user from the _Users_ tab, which must be the user you're using to log in to the application you've created in this post.
+- On this same page, you need to make sure that both checkboxes for _RBAC Settings_ on the _Settings_ tab are checked. The first one enables Role-Based Access Control (RBAC) for the GraphQL server, and the second checkbox adds the permissions for the user to the JWT.
+- You need to add this permission to an [user role](https://auth0.com/docs/dashboard/guides/roles/add-permissions-roles) and add a user to this role. Adding a new user role can also be done by visiting the [Roles](https://manage.auth0.com/#/roles/) page. Here you must create a new role called `admin` using the _Create role_ button. After creating the role, you must add the `edit:events` permission and a user to it.
+- Adding a `permission` and a user to this role can be done by clicking on the newly created role on the [Roles](https://manage.auth0.com/#/roles/) page. On the page that opens, you can add the `edit:events` permission to this role from the _Permissions_ tab and the user from the _Users_ tab, which must be the user you're using to log in to the application you've created in this post.
 
 These changes were needed to make it possible to add the permission to edit events to users and add these permissions to the JWT that's created for that user. The validation of the JWT is done on the GraphQL server, meaning that the logic to check if a user has the correct permission to edit an event must be added to the GraphQL server as well. In the code for the GraphQL server you must find the file `src/index.js` and make the following changes:
 
@@ -944,7 +944,7 @@ const resolvers = {
 
 ```
 
-The `isTokenValid` function decoded the JWT and inside the decoded JWT the field `permissions` can be found. This field contains an array with permissions for this user and if the permission `edit:events` that you've created before is present. If the user's JWT has this permission it means that the user can edit the event and the value for `canEdit` that is returned by the `event` query is true. Now, this query returns the field `canEdit` you must also add this field to the schema for this query in `src/schema.js`:
+The `isTokenValid` function decoded the JWT, and inside the decoded JWT, the field `permissions` can be found. This field contains an array with permissions for this user, and if the permission `edit:events` that you've created before is present. If the user's JWT has this permission, it means that the user can edit the event, and the value for `canEdit` that is returned by the `event` query is true. Now, this query returns the field `canEdit` you must also add this field to the schema for this query in `src/schema.js`:
 
 ```js
 // src/schema.js
@@ -1021,7 +1021,7 @@ function Event() {
 export default Event;
 ```
 
-If a user is authenticated but doesn't have the correct permission to edit events, the `Form` component won't be displayed making it unable for the user to edit the event details.
+If a user is authenticated but doesn't have the correct permission to edit events, the `Form` component won't be displayed, making it unable for the user to edit the event details.
 
 ## Conclusion
 
