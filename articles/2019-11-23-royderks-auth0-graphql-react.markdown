@@ -74,37 +74,35 @@ npm install react-router-dom
 
 With `react-router-dom`, you can import a `Router` component that will be used by your application to change between pages without having to refresh the page dynamically. This `Router` component must be added at the top level in `src/index.js` and it must wrap the `App` component:
 
-```js
+```jsx harmony
 // src/index.js
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App";
 
 ReactDOM.render(
   <Router>
     <App />
   </Router>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
-
-...
-
 ```
 
 The routes for your application can be defined in the `src/App.js` file. Delete all the code that's currently in this file and replace it with the following:
 
-```js
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+```jsx harmony
+// src/App.js
+
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 
 function App() {
   return (
     <Switch>
-      <Route path='/event/:id'>Event</Route>
-      <Route path='*'>All Events</Route>
+      <Route path="/event/:id">Event</Route>
+      <Route path="*">All Events</Route>
     </Switch>
   );
 }
@@ -122,7 +120,14 @@ src
 |-- App.test.js
 |-- index.css
 |-- logo.svg
+|-- serviceWorker.js
 |-- setupTests.js
+```
+
+You can delete all these files easily by running this command:
+
+```bash
+rm src/App.css src/App.test.js src/index.css src/logo.svg src/serviceWorker.js src/setupTests.js 
 ```
 
 The project is now ready to be connected to the GraphQL server, which will use [Apollo](https://www.apollographql.com/docs/react/) in the next section.
@@ -132,27 +137,34 @@ The project is now ready to be connected to the GraphQL server, which will use [
 The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainder of this post. 
 
 ### Setting Up a GraphQL Server
-To set up the GraphQL server that is needed to get the data for the React application that you've built so far, you need to follow all the steps in the tutorial [Build and Secure a GraphQL Server with Node.js](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) or clone the project from [Github](https://github.com/auth0-blog/auth0-graphql-server). 
+To set up the GraphQL server that is needed to get the data for the React application that you've built so far, you need to follow all the steps in the tutorial [Build and Secure a GraphQL Server with Node.js](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/). If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_.
+ 
+As an alternative, you can clone the project from [Github](https://github.com/auth0-blog/auth0-graphql-server) and set it up as follows:
 
-If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_. Otherwise, after cloning the repository, you need to move into the newly created directory and follow the steps in the _Getting started_ section of the readme. This means you need to create a new file called `.env`:
+- Anywhere in your system, run the following command to clone the repo:
 
 ```bash
-touch .env
-```
-And add the following values to that file.
-
-```
-AUTH0_DOMAIN=YOUR_AUTH0_DOMAIN
-API_IDENTIFIER=GRAPHQL_SERVER_API_IDENTIFIER
+git clone git@github.com:auth0-blog/auth0-graphql-server.git
 ```
 
-The values of `YOUR_AUTH0_DOMAIN` and `GRAPHQL_SERVER_API_IDENTIFIER` must be replaced by the values from your Auth0 account:
+- Move into the directory created for the project:
 
-- The value of `AUTH0_DOMAIN` is the value of the issuer object property from the code snippet, without the protocol, https://, the quotation marks, and the trailing slash. It follows this format: `YOUR-AUTH0-TENANT.auth0.com`.
+```bash
+cd auth0-graphql-server
+```
 
-- The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, that you must create on the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard. Do not include quotation marks.
+- Create a new file called `.env` and add your Auth0 information to it like this:
 
-After creating this file and adding the correct values to it, you can install and start the GraphQL server by running:
+```bash
+AUTH0_DOMAIN=<YOUR_AUTH0_DOMAIN>
+API_IDENTIFIER=<YOUR_API_IDENTIFIER>
+```
+
+The value of `AUTH0_DOMAIN` follows this pattern `<AUTH0-TENANT-NAME>.auth0.com`, where `AUTH0-TENANT-NAME` is the name of the Auth0 tenant where your Auth0 API is being hosted.
+
+The value of  `API_IDENTIFIER` is the Identifier value you created for the API. 
+
+After creating this file and adding the correct values to it, you can install the project dependencies and start the GraphQL server by running this:
 
 ```bash
 npm install && npm start
@@ -216,46 +228,43 @@ npm install apollo-boost @apollo/react-hooks graphql
 
 In the file `src/index.js`, you can subsequently import the method `ApolloClient` from [`apollo-boost`](https://github.com/apollographql/apollo-client/tree/master/packages/apollo-boost) that will create the GraphQL client for you. This method needs the endpoint to the GraphQL server that is running on `http://localhost:4000/` to get you started. By default, the client expects the GraphQL server to be running on the `/graphql` endpoint. Creating the client is done by making the changes below to `src/index.js`:
 
-```js
+```jsx harmony
 // src/index.js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import ApolloClient from 'apollo-boost';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import ApolloClient from "apollo-boost";
+import App from "./App";
 
 const client = new ApolloClient({
-  uri: 'https://48p1r2roz4.sse.codesandbox.io'
+  uri: "https://48p1r2roz4.sse.codesandbox.io"
 });
 
 ReactDOM.render(
   <Router>
     <App />
   </Router>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
-
-...
-
 ```
 
 But creating a client isn't sufficient to connect your React application to the GraphQL server, as you also need to create a Provider that wraps your application and makes it possible to access the client from everywhere in your project. This Provider uses the Context API from React. I [previously wrote a blog post](https://auth0.com/blog/handling-authentication-in-react-with-context-and-hooks/) about it, so you can check that out if you aren't familiar with it.
 
 You can create a Provider by importing `ApolloProvider` from `@apollo/react-hooks` in the file `src/index.js` and pass the client to it. The `ApolloProvider` must be placed inside the `Router` to wrap the `App` component that is rendered by `ReactDOM` by making the following changes:
 
-```js
+```jsx harmony
 // src/index.js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import ApolloClient from 'apollo-boost';
-import ApolloProvider from '@apollo/react-hooks';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
+import App from "./App";
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: "http://localhost:4000"
 });
 
 ReactDOM.render(
@@ -264,7 +273,7 @@ ReactDOM.render(
       <App />
     </ApolloProvider>
   </Router>,
-  document.getElementById('root'),
+  document.getElementById("root")
 );
 ```
 
@@ -282,8 +291,9 @@ touch src/Events.js
 
 The query for getting the events has been mentioned in this post before and must be added to this file together with the `useQuery` Hook:
 
-```js
+```jsx harmony
 // src/Events.js
+
 import React from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
@@ -322,30 +332,33 @@ The query `getEvents` is passed to the `useQuery` Hook that returns the variable
 
 To see the list of events in your browser, you also need to import the `Events` component in the file `src/App.js` and have it returned by the `*` routes in your `App` component. Also, let's add a header with a title to this component with some styling. Styling can be done in several ways with React, and one of the easiest ways to add styling to a React component is by using inline style attributes that require properties to be written in camel case. Let's see how this works by adding inline styling to the `App` component:
 
-```js
+```jsx harmony
 // src/App.js
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import Events from './Events';
+
+import React from "react";
+import { Switch, Route } from "react-router-dom";
+import Events from "./Events";
 
 function App() {
+  const appStyle = { fontFamily: "Helvetica" };
+  const headerStyle = {
+    display: "inline-block",
+    width: "100%",
+    backgroundColor: "lightBlue",
+    padding: "10 20px",
+    textAlign: "center",
+    borderRadius: "5px"
+  };
+  const h1Style = { color: "white" };
+
   return (
-    <div style={{ fontFamily: 'Helvetica' }}>
-      <header
-        style={{
-          display: 'inline-block',
-          width: '100%',
-          backgroundColor: 'lightBlue',
-          padding: '10 20px',
-          textAlign: 'center',
-          borderRadius: '5px',
-        }}
-      >
-        <h1 style={{ color: 'white' }}>Events</h1>
+    <div style={appStyle}>
+      <header style={headerStyle}>
+        <h1 style={h1Style}>Events</h1>
       </header>
       <Switch>
-        <Route path='/event/:id'>Event</Route>
-        <Route path='*'>
+        <Route path="/event/:id">Event</Route>
+        <Route path="*">
           <Events />
         </Route>
       </Switch>
@@ -358,31 +371,32 @@ export default App;
 
 If you open the browser again, you can see that the list of events is being displayed together with the `title` and `date` of each event. This page could also use some styling, which can be done by changing the following in the file `src/Events.js`:
 
-```js
+```jsx harmony
 // src/Events.js
 
-...
+// ...
 
 function Events() {
   const { loading, data, error } = useQuery(GET_EVENTS);
 
-  if (loading) return 'Loading...';
-  if (error) return 'Something went wrong...';
+  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
+  const liStyle = {
+    backgroundColor: "lightGrey",
+    marginBottom: "10px",
+    padding: "10px",
+    borderRadius: "5px"
+  };
+  const spanStyle = { fontStyle: "italic" };
+
+  if (loading) return "Loading...";
+  if (error) return "Something went wrong...";
 
   return (
-    <ul style={{ listStyle: 'none', width: '100%', padding: '0' }}>
+    <ul style={ulStyle}>
       {data.events.map(({ id, title, date }) => (
-        <li
-          key={id}
-          style={{
-            backgroundColor: 'lightGrey',
-            marginBottom: '10px',
-            padding: '10px',
-            borderRadius: '5px',
-          }}
-        >
+        <li key={id} style={liStyle}>
           <h2>{title}</h2>
-          <span style={{ fontStyle: 'italic' }}>{date}</span>
+          <span style={spanStyle}>{date}</span>
         </li>
       ))}
     </ul>
@@ -414,20 +428,23 @@ touch src/react-auth0-spa.js
 
 And place the following code inside:
 
-```js
+```jsx harmony
 // src/react-auth0-spa.js
-import React, { useState, useEffect, useContext } from 'react';
-import createAuth0Client from '@auth0/auth0-spa-js';
+
+import React, { useState, useEffect, useContext } from "react";
+import createAuth0Client from "@auth0/auth0-spa-js";
 
 const DEFAULT_REDIRECT_CALLBACK = () =>
   window.history.replaceState({}, document.title, window.location.pathname);
 
 export const Auth0Context = React.createContext();
+
 export const useAuth0 = () => useContext(Auth0Context);
+
 export const Auth0Provider = ({
   children,
   onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
-  ...initOptions,
+  ...initOptions
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState();
   const [user, setUser] = useState();
@@ -440,7 +457,7 @@ export const Auth0Provider = ({
       const auth0FromHook = await createAuth0Client(initOptions);
       setAuth0(auth0FromHook);
 
-      if (window.location.search.includes('code=')) {
+      if (window.location.search.includes("code=")) {
         const { appState } = await auth0FromHook.handleRedirectCallback();
         onRedirectCallback(appState);
       }
@@ -482,22 +499,23 @@ export const Auth0Provider = ({
     setIsAuthenticated(true);
     setUser(user);
   };
+
+  const contextValue = {
+    isAuthenticated,
+    user,
+    loading,
+    popupOpen,
+    loginWithPopup,
+    handleRedirectCallback,
+    getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),
+    loginWithRedirect: (...p) => auth0Client.loginWithRedirect(...p),
+    getTokenSilently: (...p) => auth0Client.getTokenSilently(...p),
+    getTokenWithPopup: (...p) => auth0Client.getTokenWithPopup(...p),
+    logout: (...p) => auth0Client.logout(...p)
+  };
+
   return (
-    <Auth0Context.Provider
-      value={{
-        isAuthenticated,
-        user,
-        loading,
-        popupOpen,
-        loginWithPopup,
-        handleRedirectCallback,
-        getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),
-        loginWithRedirect: (...p) => auth0Client.loginWithRedirect(...p),
-        getTokenSilently: (...p) => auth0Client.getTokenSilently(...p),
-        getTokenWithPopup: (...p) => auth0Client.getTokenWithPopup(...p),
-        logout: (...p) => auth0Client.logout(...p),
-      }}
-    >
+    <Auth0Context.Provider value={contextValue}>
       {children}
     </Auth0Context.Provider>
   );
@@ -534,26 +552,26 @@ As mentioned before the value of `API_IDENTIFIER` must be the same value as you 
 
 - The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, and it's the same value that you provided as an identifier to your Auth0 API earlier on. Do not include quotation marks.
 
-Next to these credentials, you need to set the _Callback URL_, _Logout URL_ and _Allowed Web Origins_ for your application on the [Application Settings](https://manage.auth0.com/#/applications/) page in the Auth0 dashboard. These values must be equal to the address where your React application is running, which is `http://localhost:3000`.
+Next to these credentials, you need to set the _Allowed Callback URLs_, _Allowed Logout URLs_ and _Allowed Web Origins_ for your application on the [Application Settings](https://manage.auth0.com/#/applications/) page in the Auth0 dashboard. These values must be equal to the address where your React application is running, which is `http://localhost:3000`.
 
 You can now restart the development server of Create React App by running `npm start` again. Your Auth0 credentials should now be available to use in the application to set up `Auth0Provider` in the file `src/index.js` and be placed around the `ApolloProvider` component. Also, `Auth0Provider` should call a callback function to redirect the user to the correct page after authentication. This function is used to clear the user's authentication code from the url to prevent them from having to re-authenticate if they move to a different page. The `history` object is used to have the user navigate without refreshing the page, something that would delete the users' authentication code from the Context of `Auth0Provider`:
 
-```js
+```jsx harmony
 // src/index.js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
-import App from './App';
-import { Auth0Provider } from './react-auth0-spa';
-import * as serviceWorker from './serviceWorker';
+
+import React from "react";
+import ReactDOM from "react-dom";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { BrowserRouter as Router } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import App from "./App";
+import { Auth0Provider } from "./react-auth0-spa";
 
 const history = createBrowserHistory();
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
+  uri: "http://localhost:4000/graphql"
 });
 
 const onRedirectCallback = () => {
@@ -574,45 +592,53 @@ ReactDOM.render(
       </ApolloProvider>
     </Auth0Provider>
   </Router>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
-
-...
-
 ```
 
 Any component that is nested within `Auth0Provider` is now able to send requests to the Auth0 service to authenticate the user by using the `useAuth0` Hook. This Hook returns multiple functions to help you with this, starting with the `loginWithRedirect` method that initiates the authentication with Auth0 and redirects the user to the login page. Also, the function `logout` is used by unauthenticated users, and the const `isAuthenticated` shows the authentication status of a user. This functionality should be added in the file `src/App.js`:
 
-```js
+```jsx harmony
 // src/App.js
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import Events from './Events';
-import { useAuth0 } from './react-auth0-spa';
+
+import React from "react";
+import { Switch, Route } from "react-router-dom";
+import Events from "./Events";
+import { useAuth0 } from "./react-auth0-spa";
 
 function App() {
+  const appStyle = { fontFamily: "Helvetica" };
+  const headerStyle = {
+    display: "inline-block",
+    width: "100%",
+    backgroundColor: "lightBlue",
+    padding: "10 20px",
+    textAlign: "center",
+    borderRadius: "5px"
+  };
+  const h1Style = { color: "white" };
+
   const { loginWithRedirect, logout, isAuthenticated } = useAuth0();
 
   return (
-    <div style={{ fontFamily: 'Helvetica' }}>
-      <header
-        style={{
-          display: 'inline-block',
-          width: '100%',
-          backgroundColor: 'lightBlue',
-          padding: '10 20px',
-          textAlign: 'center',
-          borderRadius: '5px',
-        }}
-      >
-        <h1 style={{ color: 'white' }}>Events</h1>
+    <div style={appStyle}>
+      <header style={headerStyle}>
+        <h1 style={h1Style}>Events</h1>
         <button onClick={!isAuthenticated ? loginWithRedirect : logout}>
-          {!isAuthenticated ? 'Login' : 'Logout'}
+          {!isAuthenticated ? "Login" : "Logout"}
         </button>
       </header>
+      <Switch>
+        <Route path="/event/:id">Event</Route>
+        <Route path="*">
+          <Events />
+        </Route>
+      </Switch>
+    </div>
+  );
+}
 
-      ...
-
+export default App;
 ```
 
 By clicking the _Login_ button, the Auth0 login screen gets opened. After logging in or creating an account, you get redirected to the page `http://localhost:3000`. If the authentication was successful, the _Login_ button has now changed into a _Logout_ button. Clicking this button will delete the authentication details of the user from the browsers.
@@ -631,12 +657,13 @@ touch src/Event.js
 
 And add this code block to that file:
 
-```js
+```jsx harmony
 // src/Event.js
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
+
+import React from "react";
+import { useParams } from "react-router-dom";
+import { gql } from "apollo-boost";
+import { useQuery } from "@apollo/react-hooks";
 
 const GET_EVENT = gql`
   query getEvent($id: Int!) {
@@ -652,29 +679,30 @@ const GET_EVENT = gql`
   }
 `;
 
-function Events() {
+function Event() {
   const { id } = useParams();
 
   const { loading, data, error } = useQuery(GET_EVENT, {
-    variables: { id: parseInt(id) },
+    variables: { id: parseInt(id) }
   });
 
-  if (loading) return 'Loading...';
-  if (error) return 'Something went wrong...';
+  if (loading) return "Loading...";
+  if (error) return "Something went wrong...";
 
   const { title, date, description, attendants, canEdit } =
     (data && data.event) || {};
 
+  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
+  const liStyle = {
+    backgroundColor: "lightGrey",
+    marginBottom: "10px",
+    padding: "10px",
+    borderRadius: "5px"
+  };
+
   return (
-    <ul style={{ listStyle: 'none', width: '100%', padding: '0' }}>
-      <li
-        style={{
-          backgroundColor: 'lightGrey',
-          marginBottom: '10px',
-          padding: '10px',
-          borderRadius: '5px',
-        }}
-      >
+    <ul style={ulStyle}>
+      <li style={liStyle}>
         <h2>{title}</h2>
         <em>{date}</em>
 
@@ -696,36 +724,53 @@ function Events() {
   );
 }
 
-export default Events;
+export default Event;
 ```
 
 This file uses the `GET_EVENT` query to retrieve a single event based on the `id` for the route, which you can test by going to [`http://localhost:3000/event/2`](http://localhost:3000/event/2). The `useParams` Hook from `react-router-dom` gets the value for `id` from the route, and the `useQuery` Hook retrieves the event. You can see there are no attendants displayed yet, as the information on the field `attendants` is only visible when you pass a valid JWT with the query.
 
 Passing along a JWT requires you to set more parameters to the `useQuery` Hook, but first, let's make the single event route reachable from the `Events` component. You can use the `Link` component from `react-router-dom` and add this to the file `src/Events.js`:
 
-```js
+```jsx harmony
 // src/Events.js
-import React from 'react';
-import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
-import { Link } from 'react-router-dom';
 
-  ...
+import React from "react";
+import { gql } from "apollo-boost";
+import { useQuery } from "@apollo/react-hooks";
+import { Link } from "react-router-dom";
+
+const GET_EVENTS = gql`
+  query getEvents {
+    events {
+      id
+      title
+      date
+    }
+  }
+`;
+
+function Events() {
+  const { loading, data, error } = useQuery(GET_EVENTS);
+
+  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
+  const liStyle = {
+    backgroundColor: "lightGrey",
+    marginBottom: "10px",
+    padding: "10px",
+    borderRadius: "5px"
+  };
+  const spanStyle = { fontStyle: "italic" };
+
+  if (loading) return "Loading...";
+  if (error) return "Something went wrong...";
 
   return (
-    <ul style={{ listStyle: 'none', width: '100%', padding: '0' }}>
+    <ul style={ulStyle}>
       {data.events.map(({ id, title, date }) => (
         <Link key={id} to={`/event/${id}`}>
-          <li
-            style={{
-              backgroundColor: 'lightGrey',
-              marginBottom: '10px',
-              padding: '10px',
-              borderRadius: '5px'
-            }}
-          >
+          <li style={liStyle}>
             <h2>{title}</h2>
-            <span style={{ fontStyle: 'italic' }}>{date}</span>
+            <span style={spanStyle}>{date}</span>
           </li>
         </Link>
       ))}
@@ -738,24 +783,38 @@ export default Events;
 
 In the file `src/Event.js`, the `useQuery` Hook must be altered so it can take a `context` object containing the header information as a parameter. This header information should include the field `authorization` that contains the JWT, which can be retrieved with the `getTokenSilently` method from the `useAuth0` Hook. As this is an asynchronous function, you need to call it from a React `useEffect` Hook and store the value in the local state using `useState`. You can do this by making the following changes to `src/Event.js`:
 
-```js
+```jsx harmony
 // src/Event.js
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
-import { useAuth0 } from './react-auth0-spa';
 
-...
+import React from "react";
+import { useParams } from "react-router-dom";
+import { gql } from "apollo-boost";
+import { useQuery } from "@apollo/react-hooks";
+import { useAuth0 } from "./react-auth0-spa";
 
-function Events() {
-const { id } = useParams();
-    const { isAuthenticated, getTokenSilently } = useAuth0();
+const GET_EVENT = gql`
+  query getEvent($id: Int!) {
+    event(id: $id) {
+      id
+      title
+      date
+      attendants {
+        id
+        name
+      }
+    }
+  }
+`;
 
-  const [bearerToken, setBearerToken] = React.useState('');
+function Event() {
+  const { id } = useParams();
+
+  const { isAuthenticated, getTokenSilently } = useAuth0();
+  const [bearerToken, setBearerToken] = React.useState("");
+
   React.useEffect(() => {
     const getToken = async () => {
-      const token = isAuthenticated ? await getTokenSilently() : '';
+      const token = isAuthenticated ? await getTokenSilently() : "";
 
       setBearerToken(`Bearer ${token}`);
     };
@@ -771,8 +830,45 @@ const { id } = useParams();
     }
   });
 
-  ...
+  if (loading) return "Loading...";
+  if (error) return "Something went wrong...";
 
+  const { title, date, description, attendants, canEdit } =
+    (data && data.event) || {};
+
+  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
+  const liStyle = {
+    backgroundColor: "lightGrey",
+    marginBottom: "10px",
+    padding: "10px",
+    borderRadius: "5px"
+  };
+
+  return (
+    <ul style={ulStyle}>
+      <li style={liStyle}>
+        <h2>{title}</h2>
+        <em>{date}</em>
+
+        <p>{description}</p>
+
+        {attendants && (
+          <p>
+            <strong>Attendants:</strong>
+
+            <ul>
+              {attendants.map(attendant => (
+                <li key={attendant.id}>{attendant.name}</li>
+              ))}
+            </ul>
+          </p>
+        )}
+      </li>
+    </ul>
+  );
+}
+
+export default Event;
 ```
 
 After adding the asynchronous call to the `getTokenSilently` function, the token information for this user becomes available. When you're authenticated and visit a page with a single event, the token from Auth0 will be sent along in the document containing the query to retrieve this event. If you're token is valid, the response of the GraphQL server will also include a list with all the attendants of the event.
@@ -783,9 +879,10 @@ Next to showing events, you also want the user's to be able to modify events, fo
 
 But before creating the logic to mutate the data of an event, a `Form` component must be created. Using this component that you should create in the file `src/Form.js`, the event can be edited by adding the following code block to this file:
 
-```js
+```jsx harmony
 // src/Form.js
-import React from 'react';
+
+import React from "react";
 
 const Form = ({ id, onSubmit, refetch, ...props }) => {
   const [title, setTitle] = React.useState(props.title);
@@ -798,36 +895,38 @@ const Form = ({ id, onSubmit, refetch, ...props }) => {
     refetch();
   };
 
+  const containerStyle = {
+    backgroundColor: "lightGrey",
+    margin: "15px 0px",
+    padding: "10px",
+    borderRadius: "5px"
+  };
+
+  const labelStyle = { marginRight: "10px" };
+
   return (
-    <div
-      style={{
-        backgroundColor: 'lightGrey',
-        margin: '15px 0px',
-        padding: '10px',
-        borderRadius: '5px',
-      }}
-    >
+    <div style={containerStyle}>
       <h3>Edit event</h3>
       <form onSubmit={handleOnSubmit}>
         <p>
-          <label for='title' style={{ marginRight: '10px' }}>
+          <label for="title" style={labelStyle}>
             Title:
           </label>
           <input
-            id='title'
-            type='text'
+            id="title"
+            type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
           />
         </p>
 
         <p>
-          <label for='description' style={{ marginRight: '10px' }}>
+          <label for="description" style={labelStyle}>
             Description:
           </label>
           <input
-            id='description'
-            type='text'
+            id="description"
+            type="text"
             value={description}
             onChange={e => setDescription(e.target.value)}
           />
