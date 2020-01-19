@@ -524,7 +524,9 @@ export const Auth0Provider = ({
 
 This file sets up the connection with Auth0 and returns a Provider called `Auth0Provider` and a Hook. This Provider is similar to `ApolloProvider` and needs your Auth0 credentials, making it possible to use the `useAuth0` Hook to connect with Auth0 from any components that are nested inside.
 
-Before adding the `Auth0Provider` to your project, you need to store the `Domain` and `Client ID` somewhere safe, like a local environment file. When you create an application using Create React App, you can create a `.env` file in the root folder of your project and use the constants in this file from the `process.env` variable. Also, you'll be needing the Auth0 details from the GraphQL server as these are needed to create a JWT that can be validated by the GraphQL server.
+Before adding the `Auth0Provider` to your project you need to create a new application using the [Auth0 dashboard](https://manage.auth0.com/#/applications), where you should click on the _Create Application_ button. You'll be redirected to a new page where you need to set the name for your application and select that you're building a _Single Web Page Application_. On the new page that appears you need to go to the _Settings_ tab where you can find the values for `Domain` and `Client ID`, which are required by `Auth0Provider`.
+
+The values for `Domain` and `Client ID` must be stored somewhere safe, like a local environment file. When you create an application using Create React App, you can create a `.env` file in the root folder of your project and use the constants in this file from the `process.env` variable. Also, you'll be needing the Auth0 details from the GraphQL server as these are needed to create a JWT that can be validated by the GraphQL server.
 
 > **Note:** These constants need to be prefixed with `REACT_APP_` so they can be used inside an application created with Create React App.
 
@@ -542,19 +544,11 @@ REACT_APP_CLIENT_ID=YOUR_CLIENT_ID
 REACT_APP_API_IDENTIFIER=GRAPHQL_SERVER_API_IDENTIFIER
 ```
 
-The values of `YOUR_AUTH0_DOMAIN` and `YOUR_CLIENT_ID` must be replaced by the values from your Auth0 React "Quick Start" page as follows:
-
-- The value of `AUTH0_DOMAIN` is the value of the `issuer` object property from the code snippet, without the protocol, `https://`, the quotation marks, and the trailing slash. It follows this format: `YOUR-AUTH0-TENANT.auth0.com`.
-
-- The value of `CLIENT_ID` is a unique public identifier for your application. Although it's a public identifier, it’s recommended to not make it easily guessable by third parties.
-
-As mentioned before the value of `API_IDENTIFIER` must be the same value as you used when creating the GraphQL server, this value can be found in the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard:
-
-- The value of `API_IDENTIFIER` is the value of the audience object property for the GraphQL server, and it's the same value that you provided as an identifier to your Auth0 API earlier on. Do not include quotation marks.
+The values of `YOUR_AUTH0_DOMAIN` and `YOUR_CLIENT_ID` must be replaced by the values for `Domain` and `Client ID` for the previously created application. As mentioned before the value of `API_IDENTIFIER` must be the same value as you used when creating the GraphQL server, this value can be found in the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard.
 
 Next to these credentials, you need to set the _Allowed Callback URLs_, _Allowed Logout URLs_ and _Allowed Web Origins_ for your application on the [Application Settings](https://manage.auth0.com/#/applications/) page in the Auth0 dashboard. These values must be equal to the address where your React application is running, which is `http://localhost:3000`.
 
-You can now restart the development server of Create React App by running `npm start` again. Your Auth0 credentials should now be available to use in the application to set up `Auth0Provider` in the file `src/index.js` and be placed around the `ApolloProvider` component. Also, `Auth0Provider` should call a callback function to redirect the user to the correct page after authentication. This function is used to clear the user's authentication code from the url to prevent them from having to re-authenticate if they move to a different page. The `history` object is used to have the user navigate without refreshing the page, something that would delete the users' authentication code from the Context of `Auth0Provider`:
+You can now restart the development server of Create React App by running `npm start` again. Your Auth0 credentials should now be available to use in the application to set up `Auth0Provider` in the file `src/index.js` and be placed around the `ApolloProvider` component. Also, `Auth0Provider` should call a callback function to redirect the user to the correct page after authentication. This function is used to clear the user's authentication code from the url to prevent them from having to re-authenticate if they move to a different page. The `history` object is used to have the user navigate without refreshing the page, something that would delete the users' authentication code from the Context of `Auth0Provider`. This value is created with the `createBrowserHistory` function from the `history` package, which is a major dependency of `react-router-dom` and therefore doesn't have to be installed separately:
 
 ```jsx harmony
 // src/index.js
@@ -877,7 +871,13 @@ After adding the asynchronous call to the `getTokenSilently` function, the token
 
 Next to showing events, you also want the user's to be able to modify events, for which you need to send a document with a mutation instead of a query to the GraphQL server together with a valid JWT. Sending documents with mutations to the GraphQL server is very similar to how you implemented this for queries in the first section of this post. Instead of the `useQuery` Hook, you'll use the Hook called `useMutation`, which helps you with sending the document containing a mutation that allows you to edit events. In the previous post that explained how to create the GraphQL server, you added a mutation to edit both the `title` and `description` of an event. This mutation should also be used to edit the event from the React application.
 
-But before creating the logic to mutate the data of an event, a `Form` component must be created. Using this component that you should create in the file `src/Form.js`, the event can be edited by adding the following code block to this file:
+But before creating the logic to mutate the data of an event, a `Form` component should be created by running:
+
+```bash
+touch src/Form.js
+```
+
+This creates the file `src/Form.js`, to which the following code block must be added:
 
 ```jsx harmony
 // src/Form.js
@@ -941,7 +941,9 @@ const Form = ({ id, onSubmit, refetch, ...props }) => {
 export default Form;
 ```
 
-This form has controlled input components that use the local state to store changes when you type in the `input` elements. When you submit the form, the `handleOnSubmit` function will be called, which calls both the `onSubmit` and `refetch` functions that were passed as props from the `Event` component. The `onSubmit` function will send the document with the mutation to the GraphQL server, while the `refect` function sends the document with the query to retrieve the event to the server. In the `Event` component, you must import the `Form` component and add the logic to send the document with the mutation, by making these changes to `src/Event.js`:
+This form has controlled input components that use the local state to store changes when you type in the `input` elements. When you submit the form, the `handleOnSubmit` function will be called, which calls both the `onSubmit` and `refetch` functions that were passed as props from the `Event` component. The `onSubmit` function will send the document with the mutation to the GraphQL server, while the `refect` function sends the document with the query to retrieve the event to the server. 
+
+In the `Event` component, you must import the `Form` component and add the logic to send the document with the mutation. Therefore you need to define the mutation to edit the event and use it as a parameter in the `useMutation` Hook. The `refetch` function must be destructured from the `useQuery` Hook and passed to the `Form` component, together with the `editEvent` function by making these changes to `src/Event.js`:
 
 ```js
 // src/Event.js
@@ -967,6 +969,15 @@ function Event() {
 
   ...
 
+  const { loading, data, error, refetch } = useQuery(GET_EVENT, {
+    variables: { id: parseInt(id), bearerToken },
+    context: {
+      headers: {
+        authorization: bearerToken,
+      },
+    },
+  });
+
   const [editEvent] = useMutation(EDIT_EVENT, {
     context: {
       headers: {
@@ -980,9 +991,11 @@ function Event() {
 
   return (
     <>
+      <ul>
 
       ...
 
+      </ul>
       {isAuthenticated && (
         <Form
           id={id}
