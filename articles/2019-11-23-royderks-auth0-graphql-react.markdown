@@ -38,7 +38,7 @@ The React application that you'll build in this tutorial will display a list of 
 
 You'll need to have `node` and `npm` installed on your machine. If you don't have these installed yet, you can find the installation instructions [here](https://nodejs.org/en/download/).
 
-The code for this server can be found [here](https://github.com/auth0-blog/auth0-graphql-server).
+The application you build in this post needs a running GraphQL server, which can be found [here](https://auth0-graphql-simple.herokuapp.com/playground) for this first section of this post. The second section requires you to download and run the code that can be found [here](https://github.com/auth0-blog/auth0-graphql-server).
 
 To run the server, you need to follow the steps in the _Getting started_ section README of that project, including [adding your Auth0 information](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0). If you don't have an Auth0 account yet, you can <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">register one for free here</a>. Also, I'm assuming you already have prior knowledge about JavaScript and React and know how you can create components and update state.
 
@@ -79,10 +79,10 @@ You can think of the `App` component as the top-level component of your applicat
 Install that routing package from npm by running the command below in your terminal:
 
 ```
-npm install react-router-dom
+npm install react-router-dom history
 ```
 
-With `react-router-dom`, you can import a `Router` component that will be used by your application to change between pages dynamically without triggering a full-page refresh. This `Router` component must be added at the top level in `src/index.js` and it must wrap the `App` component.
+With `react-router-dom`, you can import a `Router` component that will be used by your application to change between pages dynamically without triggering a full-page refresh. The `Router` component must be added at the top level in `src/index.js` and it must wrap the `App` component.
 
 Update `src/index.js` as follows: 
 
@@ -152,7 +152,7 @@ The project is now ready to be connected to a GraphQL server.
 
 To set up the GraphQL server that is needed to get the data for the React application that you are building, you can either follow all the steps in the [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) tutorial or you can set up a pre-built server.
 
-If you've completed the tutorial to create a GraphQL server, you can proceed to the next step _Set up Apollo client with React_. Otherwise, follow these instructions to set up the server using a [GitHub repository](https://github.com/auth0-blog/auth0-graphql-server):
+If you've completed the tutorial to create a GraphQL server or want to use the [demo GraphQL server](https://auth0-graphql-simple.herokuapp.com/playground), you can proceed to the next step _Set up Apollo client with React_. Otherwise, follow these instructions to set up the server using a [GitHub repository](https://github.com/auth0-blog/auth0-graphql-server):
 
 - Anywhere in your system, run the following command to clone the repo:
 
@@ -234,8 +234,6 @@ As mentioned before, you can send documents to the GraphQL server over plain HTT
 ## Using GraphQL with Apollo
 
 The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainder of this post. 
-
-
 
 ### Set up Apollo client with React
 
@@ -429,7 +427,7 @@ But having just a list of all the events is not sufficient, as you also want to 
 
 ## Securing a React app
 
-Auth0 is used to secure your React application, just as it was used to secure the GraphQL server that you're using for this post. By sending a request to the Auth0 authentication service with your credentials, you'll retrieve a JWT that can be validated by the GraphQL server.
+Auth0 is used to secure your React application, just as it was used to secure the GraphQL server that you're using for this post. By sending a request to the Auth0 authentication service with your credentials, you'll retrieve a JWT that can be validated by the GraphQL server. For this section you can no longer use the demo GraphQL server, but need to get the secure GraphQL server running as described in the _Setting Up a GraphQL Server_ section this article.
 
 ### Handle Authentication
 
