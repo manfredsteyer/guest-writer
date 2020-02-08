@@ -38,9 +38,17 @@ The React application that you'll build in this tutorial will display a list of 
 
 You'll need to have `node` and `npm` installed on your machine. If you don't have these installed yet, you can find the installation instructions [here](https://nodejs.org/en/download/).
 
-The application you build in this post needs a running GraphQL server, which can be found [here](https://auth0-graphql-simple.herokuapp.com/playground) for this first section of this post. The second section requires you to download and run the code that can be found [here](https://github.com/auth0-blog/auth0-graphql-server).
+You'll also need a live GraphQL server to better showcase the integration of GraphQL with React. But don't worry, we got you covered. 
 
-To run the server, you need to follow the steps in the _Getting started_ section README of that project, including [adding your Auth0 information](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0). If you don't have an Auth0 account yet, you can <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">register one for free here</a>. Also, I'm assuming you already have prior knowledge about JavaScript and React and know how you can create components and update state.
+For the first part of the tutorial, you can use this [demo GraphQL server](https://auth0-graphql-simple.herokuapp.com/playground) that we are hosting on Heroku, which is a basic server that lets you read data:
+
+```bash
+https://auth0-graphql-simple.herokuapp.com/playground
+```
+
+For the second part of the tutorial, you'll need a more complex server that supports reading and writing data and that implements authorization to restrict access to resources. For that, you'll use the [GraphQL server from the first chapter of this tutorial](https://github.com/auth0-blog/auth0-graphql-server).
+
+To run that server, you need to follow the steps in the _Getting started_ section of the repo's `README` file, including [adding your Auth0 information](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0). If you don't have an Auth0 account yet, you can <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">register one for free here</a>. Also, I'm assuming you already have prior knowledge about JavaScript and React and know how you can create components and update state.
 
 > **Note** You will need to write down the values for `AUTH0_DOMAIN` and `API_IDENTIFIER` from the `.env` file of the GraphQL server, as you'll also need these values for this post.
 
@@ -148,94 +156,38 @@ rm src/App.css src/App.test.js src/index.css src/logo.svg src/serviceWorker.js s
 
 The project is now ready to be connected to a GraphQL server.
 
-## Setting Up a GraphQL Server
+## Handling Environmental Variables
 
-To set up the GraphQL server that is needed to get the data for the React application that you are building, you can either follow all the steps in the [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) tutorial or you can set up a pre-built server.
+Your application may use configuration variables that may change depending on the environment where it is running. As such, instead of hard coding that data in your application components, it's better to store them in a centralized location like a local environment file.
+ 
+When you create an application using Create React App, you can create a `.env` file under the root project directory to define environmental variables. You can access the variables within your application components by using the `process.env` object.
 
-If you've completed the tutorial to create a GraphQL server or want to use the [demo GraphQL server](https://auth0-graphql-simple.herokuapp.com/playground), you can proceed to the next step _Set up Apollo client with React_. Otherwise, follow these instructions to set up the server using a [GitHub repository](https://github.com/auth0-blog/auth0-graphql-server):
+The variables defined within the `.env` file of a Create React App project must be prefixed with `REACT_APP_`; otherwise, you won't be able to access them as [any other variables except `NODE_ENV` will be ignored](https://create-react-app.dev/docs/adding-custom-environment-variables/) to avoid accidentally exposing a private key on the machine that could have the same name.
 
-- Anywhere in your system, run the following command to clone the repo:
-
-```bash
-git clone git@github.com:auth0-blog/auth0-graphql-server.git
-```
-
-- Move into the directory created for the project:
+From the root directory of the project, run this command to create the `.env` file:
 
 ```bash
-cd auth0-graphql-server
+touch .env
 ```
 
-- Create a new file called `.env` and add your Auth0 information to it like this:
-
-```bash
-AUTH0_DOMAIN=<YOUR_AUTH0_DOMAIN>
-API_IDENTIFIER=<YOUR_API_IDENTIFIER>
-```
-
-The value of `AUTH0_DOMAIN` follows this pattern `<AUTH0-TENANT-NAME>.auth0.com`, where `AUTH0-TENANT-NAME` is the name of the Auth0 tenant where your Auth0 API is being hosted.
-
-The value of  `API_IDENTIFIER` is the Identifier value you created for the API. 
-
-After creating this file and adding the correct values to it, you can install the project dependencies and start the GraphQL server by running this:
-
-```bash
-npm install && npm start
-```
-
-The GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). You can also see an interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
+Place the following code in this file:
 
 ```
-query {
-  events {
-    title
-    date
-    attendants {
-      name
-    }
-  }
-}
+REACT_APP_APOLLO_CLIENT_URI=https://auth0-graphql-simple.herokuapp.com/graphql
 ```
 
-The response of this query will be the full list events, including its `title`, `date`, and the `name` of every attendant of the event. This response will be in JSON and looks like the following:
+The first configuration variable that you are defining is `REACT_APP_APOLLO_CLIENT_URI`, which represents the GraphQL endpoint that you want to connect your React app with. You'll be using this variable in the next section.
 
-```json
-{
-  "data": {
-    "events": [
-      {
-        "title": "GraphQL Introduction Night",
-        "date": "2019-11-06T17:34:25+00:00",
-        "attendants": [
-          {
-            "name": "Peter"
-          },
-          {
-            "name": "Kassandra"
-          }
-        ]
-      },
-      {
-        "title": "GraphQL Introduction Night #2",
-        "date": "2019-11-06T17:34:25+00:00",
-        "attendants": [
-          {
-            "name": "Kim"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-As mentioned before, you can send documents to the GraphQL server over plain HTTP, but also by using a package like [Apollo](https://www.apollographql.com/docs/react/). With Apollo, you can connect with the GraphQL server, handle sending documents to the server, and enable caching for data retrieved from the GraphQL server.
+Keep in mind that whenever you change any environment variables you need to restart the development server for the application to consume the changes made to `.env`.
 
 ## Using GraphQL with Apollo
 
-The data for the application you create in this post is returned by the GraphQL server that was described in the _Prerequisites_ section. Setting up this GraphQL server is required to continue with the steps in the remainder of this post. 
+**EDITOR'S NOTE:** Let's use this section to introduce Apollo and any of its benefit in relation with GraphQL and React. Since the readers are using the remote demo server at this point, they don't need to worry about setting up the local server yet.
+
 
 ### Set up Apollo client with React
+
+**EDITOR'S NOTE:** Let's tell the readers here that we are going to teach them first how to query/read data using that remote demo server and that we'll use a more complex server later on to learn about writing data to secured endpoints.
 
 Before you can send documents to the GraphQL server, you need to set up the connection with the server, which can be done by adding the package `apollo-boost`. This package configures a GraphQL client for your application with Apollo's recommended settings for caching, state management, and error handling. Next to `apollo-boost`, you also need to install the packages `@apollo/react-hooks` and `graphql`. With `@apollo/react-hooks`, you can handle queries and mutations from your React components, while `graphql` is needed to use GraphQL's query language inside your application. To add these packages to your application, run the following command from your terminal:
 
@@ -255,7 +207,7 @@ import ApolloClient from "apollo-boost";
 import App from "./App";
 
 const client = new ApolloClient({
-  uri: "https://48p1r2roz4.sse.codesandbox.io"
+	uri: process.env.REACT_APP_APOLLO_CLIENT_URI
 });
 
 ReactDOM.render(
@@ -281,7 +233,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import App from "./App";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000"
+	uri: process.env.REACT_APP_APOLLO_CLIENT_URI
 });
 
 ReactDOM.render(
@@ -427,7 +379,11 @@ But having just a list of all the events is not sufficient, as you also want to 
 
 ## Securing a React app
 
-Auth0 is used to secure your React application, just as it was used to secure the GraphQL server that you're using for this post. By sending a request to the Auth0 authentication service with your credentials, you'll retrieve a JWT that can be validated by the GraphQL server. For this section you can no longer use the demo GraphQL server, but need to get the secure GraphQL server running as described in the _Setting Up a GraphQL Server_ section this article.
+You'll use Auth0 to secure your React application and your GraphQL server easily. By sending a request to the Auth0 authentication service with your credentials, you'll retrieve a JWT that can be validated by a GraphQL server.
+
+For this section, you'll start using a more complex server that exposes an API with protected endpoints to write data, along the a few read endpoints to get data to display on your React application. 
+
+If you followed the previous tutorial, [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/), you can use the server you built there. Otherwise, I'll give you instructions on how to clone the code from that tutorial to set up a local GraphQL server. Let's start first by setting up your React application to talk to a secured server.
 
 ### Handle Authentication
 
@@ -541,29 +497,26 @@ export const Auth0Provider = ({
 
 This file sets up the connection with Auth0 and returns a Provider called `Auth0Provider` and a Hook. This Provider is similar to `ApolloProvider` and needs your Auth0 credentials, making it possible to use the `useAuth0` Hook to connect with Auth0 from any components that are nested inside.
 
-Before adding the `Auth0Provider` to your project you need to create a new application using the [Auth0 dashboard](https://manage.auth0.com/#/applications), where you should click on the _Create Application_ button. You'll be redirected to a new page where you need to set the name for your application and select that you're building a _Single Web Page Application_. On the new page that appears you need to go to the _Settings_ tab where you can find the values for `Domain` and `Client ID`, which are required by `Auth0Provider`.
+Before adding the `Auth0Provider` to your project you need to register your React application with Auth0. If you have not created an Auth0 account yet, I invite to <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">sign up for a free Auth0 account here</a>.
 
-The values for `Domain` and `Client ID` must be stored somewhere safe, like a local environment file. When you create an application using Create React App, you can create a `.env` file in the root folder of your project and use the constants in this file from the `process.env` variable. Also, you'll be needing the Auth0 details from the GraphQL server as these are needed to create a JWT that can be validated by the GraphQL server.
 
-> **Note:** These constants need to be prefixed with `REACT_APP_` so they can be used inside an application created with Create React App.
+Once you log into your Auth0 account, open the [Applications section of the Auth0 dashboard](https://manage.auth0.com/#/applications) and click on the _Create Application_ button. 
 
-From the root directory of the project, run this command to create the `.env` file:
+In the dialog box that comes up, you need to set the name for your application, for example _EventsQL_, and select _Single Web Page Application_ as the application type. Once that's done, click on the _Create_ button.
 
-```bash
-touch .env
-```
+On the new page that loads, click on the _Settings_ tab to find the values for `Domain` and `Client ID` from Auth0 that you'll need to set up the `Auth0Provider` of your React application.
 
-Place the following code in this file:
+The values for `Domain` and `Client ID` must be stored  in your `.env` file as follows:
 
 ```
+REACT_APP_APOLLO_CLIENT_URI=https://auth0-graphql-simple.herokuapp.com/graphql
 REACT_APP_AUTH0_DOMAIN=YOUR_AUTH0_DOMAIN
 REACT_APP_CLIENT_ID=YOUR_CLIENT_ID
-REACT_APP_API_IDENTIFIER=GRAPHQL_SERVER_API_IDENTIFIER
 ```
 
-The values of `YOUR_AUTH0_DOMAIN` and `YOUR_CLIENT_ID` must be replaced by the values for `Domain` and `Client ID` for the previously created application. As mentioned before the value of `API_IDENTIFIER` must be the same value as you used when creating the GraphQL server, this value can be found in the [API section](https://manage.auth0.com/#/apis) of the Auth0 dashboard.
+The values of `YOUR_AUTH0_DOMAIN` and `YOUR_CLIENT_ID` must be replaced by the values for `Domain` and `Client ID` from the _Settings_ tab of the Auth0 application page.
 
-Next to these credentials, you need to set the _Allowed Callback URLs_, _Allowed Logout URLs_ and _Allowed Web Origins_ for your application on the [Application Settings](https://manage.auth0.com/#/applications/) page in the Auth0 dashboard. These values must be equal to the address where your React application is running, which is `http://localhost:3000`.
+On that same tab, scroll down to find the _Allowed Callback URLs_, _Allowed Logout URLs_ and _Allowed Web Origins_ fields. Set each of these values to the address where your React application is running, which in this case is `http://localhost:3000`. Once that's done, scroll down and click on the _Save Changes_ button.
 
 You can now restart the development server of Create React App by running `npm start` again. Your Auth0 credentials should now be available to use in the application to set up `Auth0Provider` in the file `src/index.js` and be placed around the `ApolloProvider` component. Also, `Auth0Provider` should call a callback function to redirect the user to the correct page after authentication. This function is used to clear the user's authentication code from the url to prevent them from having to re-authenticate if they move to a different page. The `history` object is used to have the user navigate without refreshing the page, something that would delete the users' authentication code from the Context of `Auth0Provider`. This value is created with the `createBrowserHistory` function from the `history` package, which is a major dependency of `react-router-dom` and therefore doesn't have to be installed separately:
 
@@ -582,7 +535,7 @@ import { Auth0Provider } from "./react-auth0-spa";
 const history = createBrowserHistory();
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql"
+	uri: process.env.REACT_APP_APOLLO_CLIENT_URI
 });
 
 const onRedirectCallback = () => {
@@ -652,13 +605,115 @@ function App() {
 export default App;
 ```
 
-By clicking the _Login_ button, the Auth0 login screen gets opened. After logging in or creating an account, you get redirected to the page `http://localhost:3000`. If the authentication was successful, the _Login_ button has now changed into a _Logout_ button. Clicking this button will delete the authentication details of the user from the browsers.
+By clicking the _Login_ button, the Auth0 login screen gets opened. After logging in or creating an account, you be be asked to authorize your Auth0 application, "EventsQL", to access your Auth0 tenant. The authorization request will also show you the permissions that the Auth0 application is requesting, such as access to your profile and email information.
+
+![Auth0 application requesting authorization to access profile information](https://cdn.auth0.com/blog/developing-secure-web-applications-with-react-and-graphql/authentication-content.png)
+
+Once you grant access or consent, you get redirected to [`http://localhost:3000`](http://localhost:3000/). If the authentication was successful, the _Login_ button has now changed into a _Logout_ button. Clicking this button will delete the authentication details of the user from the browsers.
 
 > Whenever you make a change to the code of this project, the Create React App development server can restart and make the browser refresh the page. If this happens, you need to re-authenticate with Auth0 by clicking the _Login_ button again.
 
-After completing the steps in this part of the section, you're able to authenticate with Auth0, meaning you can also start sending authenticated requests to the GraphQL server. You'll explore this in the next part of this section.
+After completing the steps in this part of the section, you're able to authenticate with Auth0, meaning you can also start sending authenticated requests to the GraphQL server. You'll explore this in the next sections.
 
-### Sending authenticated requests to the GraphQL server
+## Setting Up a GraphQL Server
+
+In this section, you'll use a more complex GraphQL server that supports both read and write operations and that implements an authorization layer to restrict access to resources. This server is the result of following the [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/) tutorial. If you've completed that tutorial, you can proceed to the next subsection, _Sending authenticated requests to the GraphQL server_.
+
+Otherwise, follow these instructions to set up the server using the code from that tutorial, which is hosted in a [GitHub repository](https://github.com/auth0-blog/auth0-graphql-server):
+
+- Anywhere in your system, run the following command to clone the repo:
+
+```bash
+git clone git@github.com:auth0-blog/auth0-graphql-server.git
+```
+
+- Move into the directory created for the project:
+
+```bash
+cd auth0-graphql-server
+```
+
+- Follow the steps on the [Securing a GraphQL Server with Auth0](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0) section of the previous chapter to set up an Auth0 API for your server, which is an API that you define within your Auth0 tenant and that you can consume from your applications to process authentication and authorization requests.
+
+- Create a new file called `.env` under the root project directory and add your Auth0 information to it like this:
+
+```bash
+AUTH0_DOMAIN=auth0blog.auth0.com
+API_IDENTIFIER=https://graphql-api
+```
+
+The value of `AUTH0_DOMAIN` follows this pattern `<AUTH0-TENANT-NAME>.auth0.com`, where `AUTH0-TENANT-NAME` is the name of the Auth0 tenant where your Auth0 API is being hosted. This is exactly the same **Domain** value that you can find under the _Settings_ tab of your Auth0 application, _EventQL_. 
+
+The value of `API_IDENTIFIER` is the Identifier value you created for the API. 
+
+After creating this file and adding the correct values to it, you can install the project dependencies and start the GraphQL server by running this:
+
+```bash
+npm install && npm start
+```
+
+The GraphQL server will become available at [`http://localhost:4000/graphql`](http://localhost:4000/graphql). Head back to your React application and open `.env`. Replace the value of `REACT_APP_APOLLO_CLIENT_URI` with `http://localhost:4000/graphql`.
+
+Also, you need the add a new `REACT_APP_API_IDENTIFIER` variable to the React `.env` file. The value of `API_IDENTIFIER` must be the same value of the `API_IDENTIFIER` you created earlier to set up the Auth0 API.
+
+Your final React `.env` file will look similar to this:
+
+```bash
+REACT_APP_APOLLO_CLIENT_URI=http://localhost:4000/graphql
+REACT_APP_AUTH0_DOMAIN=YOUR_AUTH0_DOMAIN
+REACT_APP_CLIENT_ID=YOUR_CLIENT_ID
+REACT_APP_API_IDENTIFIER=GRAPHQL_SERVER_API_IDENTIFIER
+```
+
+To test that the Graph server is up and running, you can use the interactive playground at [`http://localhost:4000/playground`](http://localhost:4000/playground). Using this GraphQL Playground interface, you can inspect the schema of this server or send documents containing queries or mutations to it. An example of a document with a query that can be handled by this GraphQL server is:
+
+```
+query {
+  events {
+    title
+    date
+    attendants {
+      name
+    }
+  }
+}
+```
+
+The response of this query will be the full list events, including its `title`, `date`, and the `name` of every attendant of the event. This response will be in JSON and looks like the following:
+
+```json
+{
+  "data": {
+    "events": [
+      {
+        "title": "GraphQL Introduction Night",
+        "date": "2019-11-06T17:34:25+00:00",
+        "attendants": [
+          {
+            "name": "Peter"
+          },
+          {
+            "name": "Kassandra"
+          }
+        ]
+      },
+      {
+        "title": "GraphQL Introduction Night #2",
+        "date": "2019-11-06T17:34:25+00:00",
+        "attendants": [
+          {
+            "name": "Kim"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+As mentioned before, you can send documents to the GraphQL server over plain HTTP, but also by using a package like [Apollo](https://www.apollographql.com/docs/react/). With Apollo, you can connect with the GraphQL server, handle sending documents to the server, and enable caching for data retrieved from the GraphQL server.
+
+## Making Secured Requests to the GraphQL Server
 
 Now that you're able to authenticate, it becomes possible to send authenticated requests to the server. For example, say you want to query an individual event. To do this, let's create a component to display a single event first. Create a file called `Event.js` in the `src` directory by running:
 
@@ -703,35 +758,34 @@ function Event() {
   const { title, date, description, attendants, canEdit } =
     (data && data.event) || {};
 
-  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
-  const liStyle = {
+  const ulStyle = {
+    listStyle: "none",
+    width: "100%",
     backgroundColor: "lightGrey",
-    marginBottom: "10px",
+    margin: "10px 0",
     padding: "10px",
     borderRadius: "5px"
   };
 
   return (
-    <ul style={ulStyle}>
-      <li style={liStyle}>
-        <h2>{title}</h2>
-        <em>{date}</em>
+    <div style={ulStyle}>
+      <h2>{title}</h2>
+      <em>{date}</em>
 
-        <p>{description}</p>
+      <p>{description}</p>
 
-        {attendants && (
-          <p>
-            <strong>Attendants:</strong>
+      {attendants && (
+        <div>
+          <strong>Attendants:</strong>
 
-            <ul>
-              {attendants.map(attendant => (
-                <li key={attendant.id}>{attendant.name}</li>
-              ))}
-            </ul>
-          </p>
-        )}
-      </li>
-    </ul>
+          <ul>
+            {attendants.map(attendant => (
+              <li key={attendant.id}>{attendant.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -845,37 +899,36 @@ function Event() {
   if (error) return "Something went wrong...";
 
   const { title, date, description, attendants, canEdit } =
-    (data && data.event) || {};
+  (data && data.event) || {};
 
-  const ulStyle = { listStyle: "none", width: "100%", padding: "0" };
-  const liStyle = {
+  const ulStyle = {
+    listStyle: "none",
+    width: "100%",
     backgroundColor: "lightGrey",
-    marginBottom: "10px",
+    margin: "10px 0",
     padding: "10px",
     borderRadius: "5px"
   };
 
   return (
-    <ul style={ulStyle}>
-      <li style={liStyle}>
-        <h2>{title}</h2>
-        <em>{date}</em>
+    <div style={ulStyle}>
+      <h2>{title}</h2>
+      <em>{date}</em>
 
-        <p>{description}</p>
+      <p>{description}</p>
 
-        {attendants && (
-          <p>
-            <strong>Attendants:</strong>
+      {attendants && (
+        <div>
+          <strong>Attendants:</strong>
 
-            <ul>
-              {attendants.map(attendant => (
-                <li key={attendant.id}>{attendant.name}</li>
-              ))}
-            </ul>
-          </p>
-        )}
-      </li>
-    </ul>
+          <ul>
+            {attendants.map(attendant => (
+              <li key={attendant.id}>{attendant.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -926,7 +979,7 @@ const Form = ({ id, onSubmit, refetch, ...props }) => {
       <h3>Edit event</h3>
       <form onSubmit={handleOnSubmit}>
         <p>
-          <label for="title" style={labelStyle}>
+          <label htmlFor="title" style={labelStyle}>
             Title:
           </label>
           <input
@@ -938,7 +991,7 @@ const Form = ({ id, onSubmit, refetch, ...props }) => {
         </p>
 
         <p>
-          <label for="description" style={labelStyle}>
+          <label htmlFor="description" style={labelStyle}>
             Description:
           </label>
           <input
@@ -964,14 +1017,27 @@ In the `Event` component, you must import the `Form` component and add the logic
 
 ```js
 // src/Event.js
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { gql } from 'apollo-boost';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { useAuth0 } from './react-auth0-spa';
-import Form from './Form';
 
-...
+import React from "react";
+import { useParams } from "react-router-dom";
+import { gql } from "apollo-boost";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useAuth0 } from "./react-auth0-spa";
+import Form from "./Form";
+
+const GET_EVENT = gql`
+  query getEvent($id: Int!) {
+    event(id: $id) {
+      id
+      title
+      date
+      attendants {
+        id
+        name
+      }
+    }
+  }
+`;
 
 const EDIT_EVENT = gql`
   mutation editEvent($id: Int!, $title: String!, $description: String!) {
@@ -983,36 +1049,71 @@ const EDIT_EVENT = gql`
 `;
 
 function Event() {
+  const { id } = useParams();
 
-  ...
+  const { isAuthenticated, getTokenSilently } = useAuth0();
+  const [bearerToken, setBearerToken] = React.useState("");
+
+  React.useEffect(() => {
+    const getToken = async () => {
+      const token = isAuthenticated ? await getTokenSilently() : "";
+
+      setBearerToken(`Bearer ${token}`);
+    };
+    getToken();
+  }, [getTokenSilently, isAuthenticated]);
 
   const { loading, data, error, refetch } = useQuery(GET_EVENT, {
     variables: { id: parseInt(id), bearerToken },
     context: {
       headers: {
-        authorization: bearerToken,
-      },
-    },
+        authorization: bearerToken
+      }
+    }
   });
 
   const [editEvent] = useMutation(EDIT_EVENT, {
     context: {
       headers: {
-        authorization: bearerToken,
-      },
-    },
+        authorization: bearerToken
+      }
+    }
   });
 
-  if (loading) return 'Loading...';
-  if (error) return 'Something went wrong...';
+  if (loading) return "Loading...";
+  if (error) return "Something went wrong...";
+
+  const { title, date, description, attendants, canEdit } =
+    (data && data.event) || {};
+
+  const ulStyle = {
+    listStyle: "none",
+    width: "100%",
+    backgroundColor: "lightGrey",
+    margin: "10px 0",
+    padding: "10px",
+    borderRadius: "5px"
+  };
 
   return (
-    <>
-      <ul>
+    <div style={ulStyle}>
+      <h2>{title}</h2>
+      <em>{date}</em>
 
-      ...
+      <p>{description}</p>
 
-      </ul>
+      {attendants && (
+        <div>
+          <strong>Attendants:</strong>
+
+          <ul>
+            {attendants.map(attendant => (
+              <li key={attendant.id}>{attendant.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {isAuthenticated && (
         <Form
           id={id}
@@ -1022,25 +1123,27 @@ function Event() {
           description={description}
         />
       )}
-    </>
+    </div>
   );
 }
 
 export default Event;
-
 ```
 
 After making these changes, you can start editing the event when you're logged in as the `Form` component only gets displayed when the user is authenticated. However, you also want to implement authorization as you don't want every authenticated user to be able to change the information of an event. How to do this is explained in the next part of this section.
 
-### Handle Authorization
+## Handling Authorization
 
 Next to authentication, another important part of your application is authorization as you want to distinguish between "regular" users and users that can modify your events. For this, you can use permissions and user roles, which are part of the Auth0 authentication service, and can be added to the GraphQL server that you're using together with the React application that you're building in this post.
 
 To handle authorization, you first need to perform several actions in the Auth0 Dashboard:
 
-- Add [permissions](https://auth0.com/docs/dashboard/guides/apis/add-permissions-apis) to the API that you've created in the GraphQL Server tutorial, which you can do by going to the [API](https://manage.auth0.com/#/apis/) page in the Auth0 dashboard. On this page, you need to create a new `permission` called `edit:events` on the _Permissions_ tab.
-- On this same page, you need to make sure that both checkboxes for _RBAC Settings_ on the _Settings_ tab are checked. The first one enables Role-Based Access Control (RBAC) for the GraphQL server, and the second checkbox adds the permissions for the user to the JWT.
+- Add [permissions](https://auth0.com/docs/dashboard/guides/apis/add-permissions-apis) to the API that you've created in the GraphQL Server tutorial, which you can do by going to the [API](https://manage.auth0.com/#/apis/) page in the Auth0 dashboard and opening the Auth0 API you created for your GraphQL server. On this page, you need to create a new permission called `edit:events` on the _Permissions_ tab. Add "Edit events" as the description.
+
+- On this same page, you need to make sure that both checkboxes for _RBAC Settings_ on the _Settings_ tab are checked. The first one enables Role-Based Access Control (RBAC) for the GraphQL server, and the second checkbox adds the permissions for the user to the JWT. Scroll down and click on _Save_.
+
 - You need to add this permission to an [user role](https://auth0.com/docs/dashboard/guides/roles/add-permissions-roles) and add a user to this role. Adding a new user role can also be done by visiting the [Roles](https://manage.auth0.com/#/roles/) page. Here you must create a new role called `admin` using the _Create role_ button. After creating the role, you must add the `edit:events` permission and a user to it.
+
 - Adding a `permission` and a user to this role can be done by clicking on the newly created role on the [Roles](https://manage.auth0.com/#/roles/) page. On the page that opens, you can add the `edit:events` permission to this role from the _Permissions_ tab and the user from the _Users_ tab, which must be the user you're using to log in to the application you've created in this post.
 
 These changes were needed to make it possible to add the permission to edit events to users and add these permissions to the JWT that's created for that user. The validation of the JWT is done on the GraphQL server, meaning that the logic to check if a user has the correct permission to edit an event must be added to the GraphQL server as well. In the code for the GraphQL server you must find the file `src/index.js` and make the following changes:
