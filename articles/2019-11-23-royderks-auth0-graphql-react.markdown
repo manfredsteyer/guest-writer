@@ -182,12 +182,11 @@ Keep in mind that whenever you change any environment variables you need to rest
 
 ## Using GraphQL with Apollo
 
-**EDITOR'S NOTE:** Let's use this section to introduce Apollo and any of its benefit in relation with GraphQL and React. Since the readers are using the remote demo server at this point, they don't need to worry about setting up the local server yet.
-
+Sending requests to the GraphQL server can be done over plain HTTP, as with any other remote server. But there are also packages available that help you with sending requests to a GraphQL server, like [Apollo](https://www.apollographql.com/docs/react/). With Apollo, you can connect with the GraphQL server, handle sending documents to the server, and enable caching for data retrieved from the server. It provides you with both React Components and React Hooks to send documents to the GraphQL server, something that you'll set up in this section.
 
 ### Set up Apollo client with React
 
-**EDITOR'S NOTE:** Let's tell the readers here that we are going to teach them first how to query/read data using that remote demo server and that we'll use a more complex server later on to learn about writing data to secured endpoints.
+In the previous section you've set the environmental variable `REACT_APP_APOLLO_CLIENT_URI` to be [https://auth0-graphql-simple.herokuapp.com/graphql](https://auth0-graphql-simple.herokuapp.com/graphql), which is the demo server that you'll first use to send documents to from your React application. Later on in this post, this demo server will be replaced with a more complex server that can handle authentication and authorization.
 
 Before you can send documents to the GraphQL server, you need to set up the connection with the server, which can be done by adding the package `apollo-boost`. This package configures a GraphQL client for your application with Apollo's recommended settings for caching, state management, and error handling. Next to `apollo-boost`, you also need to install the packages `@apollo/react-hooks` and `graphql`. With `@apollo/react-hooks`, you can handle queries and mutations from your React components, while `graphql` is needed to use GraphQL's query language inside your application. To add these packages to your application, run the following command from your terminal:
 
@@ -499,7 +498,6 @@ This file sets up the connection with Auth0 and returns a Provider called `Auth0
 
 Before adding the `Auth0Provider` to your project you need to register your React application with Auth0. If you have not created an Auth0 account yet, I invite to <a href="https://auth0.com/signup" data-amp-replace="CLIENT_ID" data-amp-addparams="anonId=CLIENT_ID(cid-scope-cookie-fallback-name)">sign up for a free Auth0 account here</a>.
 
-
 Once you log into your Auth0 account, open the [Applications section of the Auth0 dashboard](https://manage.auth0.com/#/applications) and click on the _Create Application_ button. 
 
 In the dialog box that comes up, you need to set the name for your application, for example _EventsQL_, and select _Single Web Page Application_ as the application type. Once that's done, click on the _Create_ button.
@@ -679,7 +677,7 @@ query {
 }
 ```
 
-The response of this query will be the full list events, including its `title`, `date`, and the `name` of every attendant of the event. This response will be in JSON and looks like the following:
+The response of this query will be the full list events, including its `title`, `date`, and the `attendants` of the event. This response will be in JSON and looks like the following:
 
 ```json
 {
@@ -688,30 +686,19 @@ The response of this query will be the full list events, including its `title`, 
       {
         "title": "GraphQL Introduction Night",
         "date": "2019-11-06T17:34:25+00:00",
-        "attendants": [
-          {
-            "name": "Peter"
-          },
-          {
-            "name": "Kassandra"
-          }
-        ]
+        "attendants": null
       },
       {
         "title": "GraphQL Introduction Night #2",
         "date": "2019-11-06T17:34:25+00:00",
-        "attendants": [
-          {
-            "name": "Kim"
-          }
-        ]
+        "attendants": null
       }
     ]
   }
 }
 ```
 
-As mentioned before, you can send documents to the GraphQL server over plain HTTP, but also by using a package like [Apollo](https://www.apollographql.com/docs/react/). With Apollo, you can connect with the GraphQL server, handle sending documents to the server, and enable caching for data retrieved from the GraphQL server.
+As you can see in the JSON response above the value for the field `attendants` is `null`, as this field is protected and you need send along a valid JWT with the document. In the next section you'll learn how to send secure requests to this GraphQL server.
 
 ## Making Secured Requests to the GraphQL Server
 
@@ -794,7 +781,37 @@ export default Event;
 
 This file uses the `GET_EVENT` query to retrieve a single event based on the `id` for the route, which you can test by going to [`http://localhost:3000/event/2`](http://localhost:3000/event/2). The `useParams` Hook from `react-router-dom` gets the value for `id` from the route, and the `useQuery` Hook retrieves the event. You can see there are no attendants displayed yet, as the information on the field `attendants` is only visible when you pass a valid JWT with the query.
 
-Passing along a JWT requires you to set more parameters to the `useQuery` Hook, but first, let's make the single event route reachable from the `Events` component. You can use the `Link` component from `react-router-dom` and add this to the file `src/Events.js`:
+Passing along a JWT requires you to set more parameters to the `useQuery` Hook, but first, let's make the single event route render this new `Event` component. Therefore, you need to import this component into the file `src/App.js` and add it to the route for `/event/:id`:
+
+```jsx harmony
+// src/App.js
+
+import React from "react";
+import { Switch, Route } from "react-router-dom";
+import Events from "./Events";
+import Event from "./Event";
+
+// ...
+
+  return (
+    <div style={appStyle}>
+      <header style={headerStyle}>
+        <h1 style={h1Style}>Events</h1>
+      </header>
+      <Switch>
+        <Route path="/event/:id"><Event /></Route>
+        <Route path="*">
+          <Events />
+        </Route>
+      </Switch>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Also, the single event route must be reachable from the `Events` component. You can use the `Link` component from `react-router-dom` and add this to the file `src/Events.js`:
 
 ```jsx harmony
 // src/Events.js
