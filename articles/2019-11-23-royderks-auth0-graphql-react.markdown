@@ -32,7 +32,7 @@ In this post, you'll learn how to develop a secure web application with **React 
 
 ## What You'll Build
 
-The React application that you'll build in this tutorial will display a list of events and allow you to manage event attendees. The user interface will consist of two pages: a page to list the events and a page to edit the events. The application will consume the event data from a GraphQL server that is set up to handle authentication and authorization with Auth0.
+The React application that you'll build in this tutorial will display a list of events and allow you to manage the event details. The user interface will consist of two pages: a page to list the events and a page to edit the events. The application will consume the event data from a GraphQL server that is set up to handle authentication and authorization with Auth0.
 
 ## Prerequisites
 
@@ -259,7 +259,7 @@ To make a request and a mutation, let's first add a list of all the events to th
 touch src/Events.js
 ```
 
-The query for getting the events was described earlier in this post before; add it to this file together with the `useQuery` Hook:
+The query for getting the events was described earlier in this post; add it to this file together with the `useQuery` Hook:
 
 ```jsx harmony
 // src/Events.js
@@ -375,7 +375,8 @@ function Events() {
 
 export default Events;
 ```
-<Editor note: I would suggestion summarizing what the reader has learned to do up to this point before moving into the introduction to the next section. It could be something like, "So far you have learned how to X, Y, and Z. You've produced a nicely formatted list of all the events in your database.">
+
+So far you've learned how to set up a basic React application and use Apollo to retrieve data from a GraphQL server. Using this data you've produced a nicely formatted list of all the events returned by the server.
 
 But having just a list of all the events is probably not sufficient: you might want to display the attendees for each event. However, this information is private and requires that you send a valid JWT along with your query. This JWT can be retrieved by sending a request to the Auth0 authentication service. You'll learn how to do this retrieval process in the next section.
 
@@ -383,9 +384,11 @@ But having just a list of all the events is probably not sufficient: you might w
 
 To secure your React application and your GraphQL server easily, you will need to use Auth0. By sending a request to the Auth0 authentication service with your credentials, you'll retrieve a JWT that can be validated by a GraphQL server.
 
-For this section, you'll start using a more complex server that exposes an API with protected endpoints to write data, along with a few read endpoints to get data to display on your React application. 
+For this section, you'll start using a more complex server that exposes an API with protected operations to write data, along with a few query fields to get data to display in your React application. 
 
-If you completed the previous tutorial, [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/), you can use the server you built there. <Editor note: Perhaps you could also say whether the reader can skip the next section or sections and resume in section X? It's not clear to me whether the person who already built a server in the first tutorial needs to follow the next part.> Otherwise, I'll give you instructions <Editor query: are these instructions in the very next part, Handle Authentication? If so, I would suggest rewriting the opening of this sentence like this: "Otherwise, follow the instructions in the next part, Handle Authentication, to clone...> on how to clone the code from that tutorial and set up a local GraphQL server. We'll start by setting up your React application to talk to a secured server.
+If you completed the previous tutorial, [_Build and Secure a GraphQL Server with Node.js_](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/), you can use the server you built there. Otherwise, make sure that you've followed the steps in the _Prerequisites_ section of this post.
+
+We'll start by setting up your React application to talk to a secured server.
 
 ### Handle Authentication
 
@@ -634,7 +637,7 @@ git clone git@github.com:auth0-blog/auth0-graphql-server.git
 cd auth0-graphql-server
 ```
 
-- Follow the steps in the [Securing a GraphQL Server with Auth0](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0) section of the previous chapter to set up an Auth0 API for your server. <Editor note: This previous instruction is confusing, particularly "of the previous chapter"—does "chapter" mean "section" or does it mean the other tutorial, or something else? It would be better to specify exactly the name or number of the chapter so the reader doesn't have to guess "previous to what?"> An Auth0 API is an API that you define within your Auth0 tenant, which you can consume from your applications to process authentication and authorization requests.
+- Follow the steps in the [Securing a GraphQL Server with Auth0](https://auth0.com/blog/build-and-secure-a-graphql-server-with-node-js/#Securing-a-GraphQL-Server-with-Auth0) section of the previous post to set up an Auth0 API for your server. An Auth0 API is an API that you define within your Auth0 tenant, which you can consume from your applications to process authentication and authorization requests.
 
 - Create a new file called `.env` under the root project directory and add your Auth0 information to it like this:
 
@@ -680,7 +683,7 @@ query {
 }
 ```
 
-The response to this query will be the full list of events, including the `title`, `date`, and `attendants` <Editor note: I would recommend using the word "attendees" rather than "attendants" for this field name as well as when using the word in text. The word "attendant" is not the correct word to describe a person who attends an event.> of the event. This response will be in JSON and looks like the following:
+The response to this query will be the full list of events, including the `title`, `date`, and `attendants` of the event. This response will be in JSON and looks like the following:
 
 ```json
 {
@@ -1160,7 +1163,7 @@ To handle authorization, you first need to perform several actions in the Auth0 
 
 - Add [permissions](https://auth0.com/docs/dashboard/guides/apis/add-permissions-apis) to the API that you've created in the GraphQL Server tutorial. Do this by going to the [API](https://manage.auth0.com/#/apis/) page in the Auth0 dashboard and opening the Auth0 API you created for your GraphQL server. On this page, create a new permission called `edit:events` in the _Permissions_ tab. Add "Edit events" as the description.
 
-- On this same page, make sure that both check boxes for _RBAC Settings_ on the _Settings_ tab are checked. The first enables Role-Based Access Control (RBAC) for the GraphQL server, and the second adds permissions for the user to the JWT. Scroll down and click on _Save_.
+- On this same page, make sure that both checkboxes for _RBAC Settings_ on the _Settings_ tab are checked. The first enables Role-Based Access Control (RBAC) for the GraphQL server, and the second adds permissions for the user to the JWT. Scroll down and click on _Save_.
 
 - Add this permission to a [user role](https://auth0.com/docs/dashboard/guides/roles/add-permissions-roles) and add a user to this role. A new user role can also be added by visiting the [Roles](https://manage.auth0.com/#/roles/) page. Here you must create a new role called `admin` using the _Create role_ button. After creating the role, you must add the `edit:events` permission and a user to it.
 
@@ -1218,7 +1221,7 @@ const schema = buildSchema(`
 
 ```
 
-> **Note** The updated code for the GraphQL server can also be found in [this](https://github.com/auth0-blog/auth0-graphql-server) repository on Github, where you've got to <Editor query: What does "you've got to" mean in this context? Are you saying the reader MUST do something as part of the tutorial, or are you encouraging readers to explore it?> check out the `permissions` branch.
+> **Note** The updated code for the GraphQL server can also be found in [this](https://github.com/auth0-blog/auth0-graphql-server) repository on Github, where must check out the `permissions` branch.
 
 In the React application, you must update the query used to retrieve a single event, by adding the field `canEdit` here as well. When the field `canEdit` is true, the user is both authenticated and has the correct permissions to edit events. Therefore you can make changes to `src/Event.js` to not only ask for the field `canEdit`, but also to use this value to determine whether or not the `Form` component must be displayed:
 
@@ -1277,4 +1280,4 @@ If a user is authenticated but doesn't have the correct permission to edit event
 
 ## Conclusion
 
-In this tutorial, you've created a React application that uses a GraphQL server to retrieve its data and uses Auth0 for authorization and authentication. You've learned how to set up a basic React application with routing, and used Apollo to fetch data from a React server using queries and mutations. Through the use of Auth0, authentication and authorization are added to the application, giving users different permissions for taking actions. The full code for this tutorial can be found on Github, as well as the previous tutorial in this series, which covers how to create a GraphQL server.
+In this tutorial, you've created a React application that uses a GraphQL server to retrieve its data and uses Auth0 for authorization and authentication. You've learned how to set up a basic React application with routing, and used Apollo to fetch data from a GraphQL server using queries and mutations. Through the use of Auth0, authentication and authorization are added to the application, giving users different permissions for taking actions. The full code for this tutorial can be found on Github, as well as the previous tutorial in this series, which covers how to create a GraphQL server.
